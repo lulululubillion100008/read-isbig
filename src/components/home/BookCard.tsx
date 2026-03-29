@@ -40,18 +40,8 @@ export default function BookCard({ summary }: BookCardProps) {
 
         {/* Info */}
         <div className="p-4">
-          {/* 作者（可点击） */}
-          {detail ? (
-            <Link
-              href={`/author/${detail.authorId}`}
-              className="text-sm text-gray-500 hover:text-indigo-500 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {book.author}
-            </Link>
-          ) : (
-            <p className="text-sm text-gray-500">{book.author}</p>
-          )}
+          {/* 作者 */}
+          <p className="text-sm text-gray-500">{book.author}</p>
 
           <div className="mt-2 flex items-center gap-2 flex-wrap">
             {/* 分类标签 */}
