@@ -20,6 +20,54 @@
 
 ---
 
+## Screenshots
+
+### 首页 - 书籍推荐与分类浏览
+
+<div align="center">
+  <img src="docs/screenshots/home-full.png" alt="首页完整展示" width="800" />
+</div>
+
+> 首页展示「神作推荐」「佳作推荐」分级书单，14大分类快速入口，一键搜索
+
+### 思维导图式阅读器
+
+<div align="center">
+  <img src="docs/screenshots/reader-book1.png" alt="阅读器 - 思考快与慢" width="800" />
+  <br/><br/>
+  <img src="docs/screenshots/reader-book2.png" alt="阅读器 - 不同主题" width="800" />
+</div>
+
+> 每本书拥有独特的配色主题，左侧竖排书名边栏 + 右侧思维导图式内容
+
+### 探索页 - 分类与评分系统
+
+<div align="center">
+  <img src="docs/screenshots/explore.png" alt="探索页" width="800" />
+</div>
+
+> 14大分类浏览，神作/佳作/良作三级评分，类似豆瓣读书评分体系
+
+### 作者详情页
+
+<div align="center">
+  <img src="docs/screenshots/author.png" alt="作者详情" width="800" />
+</div>
+
+> 作者简介、主要成就、关联书籍一目了然
+
+### 移动端适配
+
+<div align="center">
+  <img src="docs/screenshots/mobile-home.png" alt="移动端首页" width="280" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/screenshots/mobile-reader.png" alt="移动端阅读器" width="280" />
+</div>
+
+> 完美适配手机端，触摸滑动翻页，沉浸式阅读体验
+
+---
+
 ## Why Read Is Big?
 
 在这个信息爆炸的时代，我们有太多想读的书，却没有足够的时间。
