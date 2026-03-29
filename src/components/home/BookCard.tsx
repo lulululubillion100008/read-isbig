@@ -13,43 +13,40 @@ export default function BookCard({ summary }: BookCardProps) {
 
   return (
     <Link href={`/book/${book.id}`} className="group block">
-      <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-lg">
-        {/* Cover - gradient with title */}
+      <div className="hover-lift overflow-hidden rounded-[var(--radius-lg)] bg-white" style={{ boxShadow: 'var(--shadow-card)' }}>
+        {/* Cover - 渐变封面 */}
         <div
-          className="relative flex h-48 items-center justify-center p-4 md:h-56"
+          className="relative flex aspect-[4/3] items-end p-5"
           style={{
-            background: `linear-gradient(135deg, ${theme.primaryColor}, ${theme.secondaryColor})`,
+            background: `linear-gradient(160deg, ${theme.primaryColor} 0%, ${theme.secondaryColor} 60%, ${theme.accentColor || theme.secondaryColor} 100%)`,
           }}
         >
-          <h3
-            className="text-center text-xl font-bold leading-tight text-white drop-shadow-md md:text-2xl"
-            style={{
-              textShadow: '0 2px 8px rgba(0,0,0,0.3)',
-            }}
-          >
+          {/* 毛玻璃装饰 */}
+          <div className="absolute right-[-20%] top-[-20%] h-[60%] w-[60%] rounded-full bg-white/10 blur-2xl" />
+          <div className="absolute bottom-[-10%] left-[-10%] h-[40%] w-[40%] rounded-full bg-black/10 blur-2xl" />
+
+          {/* 书名 */}
+          <h3 className="relative z-10 text-lg font-bold leading-snug text-white md:text-xl" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.25)' }}>
             {book.title}
           </h3>
 
-          {/* 评分徽章 - 右上角 */}
+          {/* 评分徽章 */}
           {detail && (
-            <div className="absolute right-2 top-2">
+            <div className="absolute right-3 top-3 z-10">
               <RatingBadge score={detail.score} rating={detail.rating} size="sm" />
             </div>
           )}
         </div>
 
-        {/* Info */}
-        <div className="p-4">
-          {/* 作者 */}
-          <p className="text-sm text-gray-500">{book.author}</p>
-
-          <div className="mt-2 flex items-center gap-2 flex-wrap">
-            {/* 分类标签 */}
+        {/* 信息区 */}
+        <div className="px-4 py-3.5">
+          <p className="text-sm font-medium text-[var(--text-secondary)]">{book.author}</p>
+          <div className="mt-2.5 flex items-center gap-1.5 flex-wrap">
             {detail ? (
               detail.categories.slice(0, 2).map((cat) => (
                 <span
                   key={cat}
-                  className="inline-block rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500"
+                  className="rounded-md bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-500 ring-1 ring-slate-100"
                 >
                   {cat}
                 </span>
@@ -57,14 +54,14 @@ export default function BookCard({ summary }: BookCardProps) {
             ) : (
               book.category && (
                 <span
-                  className="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium text-white"
+                  className="rounded-md px-2 py-0.5 text-[11px] font-medium text-white"
                   style={{ backgroundColor: theme.primaryColor }}
                 >
                   {book.category}
                 </span>
               )
             )}
-            <span className="text-xs text-gray-400">{readingTime} 分钟阅读</span>
+            <span className="ml-auto text-[11px] text-[var(--text-tertiary)]">{readingTime} min</span>
           </div>
         </div>
       </div>

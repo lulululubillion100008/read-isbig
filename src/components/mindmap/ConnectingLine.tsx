@@ -16,16 +16,11 @@ export default function ConnectingLine({ children, theme, hasConnector = true }:
     <div
       className="connector-tree relative ml-4 pl-6"
       style={{
-        borderLeftWidth: '2px',
+        borderLeftWidth: '1.5px',
         borderLeftStyle: 'solid',
-        borderLeftColor: theme.connectorColor,
+        borderLeftColor: `${theme.connectorColor}80`,
       }}
     >
-      {/*
-        Each direct child gets a horizontal branch via CSS.
-        We use a wrapper div with a ::before-like approach:
-        a small absolute horizontal line for each item.
-      */}
       {children}
 
       {/* Inline styles for the branch pseudo-elements */}
@@ -38,9 +33,19 @@ export default function ConnectingLine({ children, theme, hasConnector = true }:
           position: absolute;
           left: -24px;
           top: 14px;
-          width: 20px;
+          width: 18px;
           height: 0;
-          border-top: 2px solid ${theme.connectorColor};
+          border-top: 1.5px solid ${theme.connectorColor}80;
+          border-radius: 0 1px 1px 0;
+        }
+        .connector-tree > *:last-child::after {
+          content: '';
+          position: absolute;
+          left: -25.5px;
+          top: 14px;
+          bottom: -1px;
+          width: 2px;
+          background: var(--surface, #fff);
         }
       `}</style>
     </div>

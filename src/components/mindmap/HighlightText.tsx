@@ -12,7 +12,11 @@ export default function HighlightText({ text, theme, inline = false }: Highlight
   return (
     <Tag
       className="font-semibold"
-      style={{ color: theme.highlightColor }}
+      style={{
+        color: theme.highlightColor,
+        lineHeight: 1.8,
+        letterSpacing: '0.01em',
+      }}
     >
       {text}
     </Tag>

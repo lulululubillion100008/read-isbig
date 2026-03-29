@@ -16,18 +16,18 @@ function BackgroundPattern({ pattern, color }: { pattern?: string; color: string
 
   const patternStyles: Record<string, React.CSSProperties> = {
     dots: {
-      backgroundImage: `radial-gradient(${color}15 1px, transparent 1px)`,
-      backgroundSize: '20px 20px',
+      backgroundImage: `radial-gradient(${color}10 1px, transparent 1px)`,
+      backgroundSize: '24px 24px',
     },
     lines: {
-      backgroundImage: `repeating-linear-gradient(0deg, ${color}08, ${color}08 1px, transparent 1px, transparent 20px)`,
+      backgroundImage: `repeating-linear-gradient(0deg, ${color}06, ${color}06 1px, transparent 1px, transparent 24px)`,
     },
     waves: {
-      backgroundImage: `repeating-linear-gradient(45deg, ${color}06, ${color}06 1px, transparent 1px, transparent 15px)`,
+      backgroundImage: `repeating-linear-gradient(45deg, ${color}04, ${color}04 1px, transparent 1px, transparent 18px)`,
     },
     grid: {
-      backgroundImage: `linear-gradient(${color}08 1px, transparent 1px), linear-gradient(90deg, ${color}08 1px, transparent 1px)`,
-      backgroundSize: '24px 24px',
+      backgroundImage: `linear-gradient(${color}06 1px, transparent 1px), linear-gradient(90deg, ${color}06 1px, transparent 1px)`,
+      backgroundSize: '28px 28px',
     },
   };
 
@@ -60,7 +60,10 @@ export default function SummaryPage({ page, book, totalPages, theme, fontFamily,
       />
 
       {/* Main content area */}
-      <div className="relative flex flex-1 flex-col overflow-hidden bg-white">
+      <div
+        className="relative flex flex-1 flex-col overflow-hidden"
+        style={{ background: 'var(--surface)' }}
+      >
         <BackgroundPattern pattern={theme.backgroundPattern} color={theme.primaryColor} />
 
         {/* Top banner */}
@@ -70,12 +73,23 @@ export default function SummaryPage({ page, book, totalPages, theme, fontFamily,
         <MetadataBar bookTitle={book.title} date={formattedDate} theme={theme} />
 
         {/* Content - scrollable */}
-        <div className="relative flex-1 overflow-y-auto px-6 py-4" style={{ fontFamily, fontSize: fontSize ? `${fontSize}px` : undefined }}>
-          <div className="flex flex-col gap-1">
+        <div
+          className="custom-scrollbar relative flex-1 overflow-y-auto px-6 py-8 sm:px-10 md:px-12 lg:px-16"
+          style={{
+            fontFamily,
+            fontSize: fontSize ? `${fontSize}px` : undefined,
+            lineHeight: 1.9,
+            letterSpacing: '0.01em',
+          }}
+        >
+          <div className="mx-auto flex max-w-[680px] flex-col gap-2">
             {page.sections.map((section, index) => (
               <MindMapSection key={index} section={section} theme={theme} />
             ))}
           </div>
+
+          {/* Bottom breathing room */}
+          <div className="h-16" />
         </div>
       </div>
     </div>

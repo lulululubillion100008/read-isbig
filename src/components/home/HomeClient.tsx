@@ -4,7 +4,6 @@ import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import BookSearch from './BookSearch';
 
-// 懒加载引导流程，避免影响首屏加载
 const OnboardingFlow = dynamic(
   () => import('@/components/onboarding/OnboardingFlow'),
   { ssr: false }
@@ -28,12 +27,7 @@ export default function HomeClient() {
 
   return (
     <>
-      {/* 搜索框 */}
-      <section className="px-6 pb-16">
-        <BookSearch />
-      </section>
-
-      {/* 个性化引导 */}
+      <BookSearch />
       {mounted && showOnboarding && (
         <OnboardingFlow onComplete={() => setShowOnboarding(false)} />
       )}

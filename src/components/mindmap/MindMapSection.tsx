@@ -19,7 +19,7 @@ export default function MindMapSection({ section, theme, depth = 0 }: MindMapSec
 
     case 'concept-box':
       return (
-        <div className="py-2">
+        <div className="py-2.5">
           <ConceptBox
             label={section.content}
             theme={theme}
@@ -30,8 +30,14 @@ export default function MindMapSection({ section, theme, depth = 0 }: MindMapSec
 
     case 'mindmap-branch':
       return (
-        <div className="py-2">
-          <p className="mb-2 font-semibold" style={{ color: theme.primaryColor }}>
+        <div className="py-2.5">
+          <p
+            className="mb-2.5 font-semibold"
+            style={{
+              color: theme.primaryColor,
+              letterSpacing: '0.01em',
+            }}
+          >
             {section.content}
           </p>
           {section.children && section.children.length > 0 && (
@@ -48,7 +54,7 @@ export default function MindMapSection({ section, theme, depth = 0 }: MindMapSec
 
     case 'numbered-list':
       return (
-        <div className="py-2">
+        <div className="py-2.5">
           {section.items && section.items.length > 0 && (
             <div className="flex flex-col gap-1">
               {section.items.map((item) => (
@@ -61,7 +67,7 @@ export default function MindMapSection({ section, theme, depth = 0 }: MindMapSec
 
     case 'highlight':
       return (
-        <div className="py-2">
+        <div className="py-2.5">
           <HighlightText text={section.content} theme={theme} />
         </div>
       );
@@ -69,8 +75,12 @@ export default function MindMapSection({ section, theme, depth = 0 }: MindMapSec
     case 'text':
       return (
         <p
-          className="py-1 leading-relaxed text-gray-700"
-          style={section.emphasis ? { color: theme.highlightColor, fontWeight: 600 } : undefined}
+          className="py-1.5 leading-relaxed"
+          style={{
+            color: section.emphasis ? theme.highlightColor : 'var(--text-secondary)',
+            fontWeight: section.emphasis ? 600 : 400,
+            lineHeight: 1.85,
+          }}
         >
           {section.content}
         </p>
@@ -78,7 +88,7 @@ export default function MindMapSection({ section, theme, depth = 0 }: MindMapSec
 
     case 'card-group':
       return (
-        <div className="py-2">
+        <div className="py-2.5">
           <ContentCard theme={theme} accent>
             <div className="flex flex-col gap-2">
               {section.children?.map((child, i) => (
@@ -92,14 +102,22 @@ export default function MindMapSection({ section, theme, depth = 0 }: MindMapSec
     case 'quote':
       return (
         <blockquote
-          className="my-3 border-l-4 py-2 pl-4 italic text-gray-600"
-          style={{ borderLeftColor: theme.primaryColor }}
+          className="my-4 border-l-[3px] py-2.5 pl-5 italic"
+          style={{
+            borderLeftColor: `${theme.primaryColor}60`,
+            color: 'var(--text-secondary)',
+            lineHeight: 1.85,
+          }}
         >
           {section.content}
         </blockquote>
       );
 
     default:
-      return <p className="text-gray-700">{section.content}</p>;
+      return (
+        <p style={{ color: 'var(--text-secondary)' }}>
+          {section.content}
+        </p>
+      );
   }
 }

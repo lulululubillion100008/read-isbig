@@ -3,8 +3,8 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Read Is Big - 精华阅读",
-  description: "输入书名，15分钟获取一本书的精华内容",
+  title: "Read Is Big - 15分钟读懂一本好书",
+  description: "AI 提炼书籍精华，思维导图式呈现，让你快速获取一本书的核心价值",
 };
 
 export default function RootLayout({
@@ -13,11 +13,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="h-full antialiased">
+    <html lang="zh-CN" className="h-full antialiased" suppressHydrationWarning>
       <head>
-        {/* 中文字体通过CDN引入 */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&family=ZCOOL+KuaiLe&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+KuaiLe&display=swap"
           rel="stylesheet"
         />
         <link
@@ -25,7 +26,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--text-primary)]">
         {children}
         <Analytics />
       </body>

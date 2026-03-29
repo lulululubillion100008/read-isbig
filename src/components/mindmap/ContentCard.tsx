@@ -10,12 +10,17 @@ interface ContentCardProps {
 export default function ContentCard({ children, theme, accent = false }: ContentCardProps) {
   return (
     <div
-      className="rounded-lg border border-gray-200 bg-white p-4 md:p-6"
-      style={
-        accent
-          ? { borderLeftWidth: '4px', borderLeftColor: theme.primaryColor }
-          : undefined
-      }
+      className="p-5 md:p-6"
+      style={{
+        borderRadius: 'var(--radius-xl)',
+        background: 'var(--surface, #fff)',
+        border: '1px solid var(--border-subtle)',
+        boxShadow: 'var(--shadow-card)',
+        ...(accent
+          ? { borderLeftWidth: '3px', borderLeftColor: `${theme.primaryColor}80` }
+          : {}),
+        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+      }}
     >
       {children}
     </div>

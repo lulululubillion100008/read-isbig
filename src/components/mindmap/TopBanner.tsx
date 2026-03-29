@@ -8,12 +8,23 @@ interface TopBannerProps {
 export default function TopBanner({ title, theme }: TopBannerProps) {
   return (
     <div
-      className="w-full px-6 py-4"
+      className="relative w-full overflow-hidden px-6 py-5 sm:px-10"
       style={{ backgroundColor: theme.bannerBg }}
     >
+      {/* Subtle ambient glow */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%)',
+        }}
+      />
       <h1
-        className="text-xl font-bold tracking-wide md:text-2xl"
-        style={{ color: theme.bannerText }}
+        className="relative text-xl font-bold tracking-wide md:text-2xl"
+        style={{
+          color: theme.bannerText,
+          lineHeight: 1.4,
+          letterSpacing: '0.02em',
+        }}
       >
         {title}
       </h1>

@@ -17,14 +17,23 @@ export default function SectionHeader({ title, depth = 0, theme }: SectionHeader
   const Tag = depth === 0 ? 'h2' : depth === 1 ? 'h3' : 'h4';
 
   return (
-    <div className="py-1">
-      <Tag className={`font-bold text-gray-900 ${sizeClass}`}>
+    <div className={depth === 0 ? 'py-2' : 'py-1'}>
+      <Tag
+        className={`font-bold ${sizeClass}`}
+        style={{
+          color: 'var(--text-primary)',
+          letterSpacing: depth === 0 ? '0.02em' : '0.01em',
+          lineHeight: 1.4,
+        }}
+      >
         {title}
       </Tag>
       {depth === 0 && (
         <div
-          className="mt-1.5 h-0.5 w-12 rounded-full"
-          style={{ backgroundColor: theme.primaryColor }}
+          className="mt-2.5 h-[2.5px] w-10 rounded-full"
+          style={{
+            background: `linear-gradient(90deg, ${theme.primaryColor}, ${theme.primaryColor}40)`,
+          }}
         />
       )}
     </div>

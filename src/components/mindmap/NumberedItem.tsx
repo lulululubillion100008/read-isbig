@@ -9,20 +9,28 @@ interface NumberedItemProps {
 
 export default function NumberedItem({ item, theme }: NumberedItemProps) {
   return (
-    <div className="flex gap-3 py-2">
+    <div className="flex gap-3.5 py-2.5">
       {/* Numbered circle */}
       <NumberedCircle number={item.number} theme={theme} />
 
       {/* Content */}
-      <div className="min-w-0 flex-1">
-        <p className="font-bold leading-snug text-gray-900">{item.title}</p>
+      <div className="min-w-0 flex-1 pt-0.5">
+        <p
+          className="font-bold leading-snug"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          {item.title}
+        </p>
         {item.description && (
-          <p className="mt-1 text-sm leading-relaxed text-gray-600">
+          <p
+            className="mt-1.5 text-sm leading-relaxed"
+            style={{ color: 'var(--text-secondary)', lineHeight: 1.7 }}
+          >
             {item.description}
           </p>
         )}
         {item.children && item.children.length > 0 && (
-          <div className="mt-2 space-y-2">
+          <div className="mt-3 space-y-2">
             {item.children.map((child, idx) => (
               <MindMapSection key={idx} section={child} theme={theme} depth={1} />
             ))}

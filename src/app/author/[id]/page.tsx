@@ -44,10 +44,19 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
 
   if (!author) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div
+        className="flex min-h-screen items-center justify-center"
+        style={{ background: 'var(--background)' }}
+      >
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">未找到该作者</h1>
-          <Link href="/explore" className="mt-4 inline-block text-indigo-500 hover:underline">
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+            未找到该作者
+          </h1>
+          <Link
+            href="/explore"
+            className="mt-4 inline-block font-medium"
+            style={{ color: 'var(--accent)' }}
+          >
             返回探索页
           </Link>
         </div>
@@ -63,56 +72,83 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
     : '';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-50">
-      {/* 顶部导航 */}
-      <header className="sticky top-0 z-20 border-b border-white/10 bg-slate-900/70 backdrop-blur-xl">
+    <div className="min-h-screen">
+      {/* Header */}
+      <header className="glass-dark sticky top-0 z-20">
         <div className="mx-auto flex max-w-4xl items-center px-6 py-4">
-          <Link href="/explore" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+          <Link
+            href="/explore"
+            className="text-sm font-medium text-gray-300"
+            style={{ transition: 'color 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}
+          >
             &larr; 返回探索
           </Link>
         </div>
       </header>
 
-      {/* 作者信息区 - 深色背景 */}
-      <section className="relative overflow-hidden px-6 pt-12 pb-16">
-        {/* 装饰光晕 */}
-        <div className="absolute left-1/2 top-20 h-64 w-64 -translate-x-1/2 rounded-full bg-indigo-500/20 blur-3xl" />
-        <div className="absolute right-1/4 top-32 h-32 w-32 rounded-full bg-purple-500/15 blur-2xl" />
+      {/* Author Hero -- immersive dark gradient */}
+      <section
+        className="relative overflow-hidden px-6 pt-20 pb-24"
+        style={{
+          background: 'linear-gradient(165deg, #0c1222 0%, #141e38 35%, #1a1a2e 65%, var(--background) 100%)',
+        }}
+      >
+        {/* Decorative orbs */}
+        <div className="absolute left-1/2 top-8 h-80 w-80 -translate-x-1/2 rounded-full bg-[#6366f1]/12 blur-[120px]" />
+        <div className="absolute right-1/4 top-28 h-56 w-56 rounded-full bg-[#a855f7]/10 blur-[100px]" />
+        <div className="absolute left-1/4 bottom-8 h-48 w-48 rounded-full bg-[#ec4899]/8 blur-[80px]" />
+        <div className="absolute right-1/3 bottom-16 h-32 w-32 rounded-full bg-[#06b6d4]/6 blur-[60px]" />
 
         <div className="relative mx-auto max-w-4xl">
-          {/* 头像区域 */}
-          <div className="flex flex-col items-center text-center">
+          <div className="float-up flex flex-col items-center text-center">
+            {/* Avatar */}
             <div className="relative">
-              {/* 光晕效果 */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 blur-lg opacity-40" />
-              {/* 头像占位 */}
-              <div className="relative flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-4xl font-bold text-white shadow-xl ring-4 ring-white/20">
+              <div className="absolute inset-0 scale-150 rounded-full bg-gradient-to-r from-[#6366f1] to-[#a855f7] blur-2xl opacity-25" />
+              <div
+                className="relative flex h-32 w-32 items-center justify-center rounded-full text-5xl font-bold text-white"
+                style={{
+                  background: 'linear-gradient(135deg, var(--accent), #a855f7, #ec4899)',
+                  boxShadow: '0 12px 40px rgba(99, 102, 241, 0.35), inset 0 1px 0 rgba(255,255,255,0.2)',
+                  border: '3px solid rgba(255,255,255,0.12)',
+                }}
+              >
                 {author.name.charAt(0)}
               </div>
             </div>
 
-            <h1 className="mt-6 text-3xl font-extrabold text-white md:text-4xl">
+            <h1 className="float-up float-up-delay-1 mt-8 text-4xl font-extrabold text-white tracking-tight md:text-5xl">
               {author.name}
             </h1>
 
-            {/* 国籍与生卒年 */}
-            <div className="mt-2 flex items-center gap-3 text-sm text-gray-400">
-              {author.nationality && <span>{author.nationality}</span>}
+            {/* Nationality & lifespan */}
+            <div className="float-up float-up-delay-2 mt-4 flex items-center gap-3 text-sm text-gray-400">
+              {author.nationality && (
+                <span className="font-medium">{author.nationality}</span>
+              )}
               {lifespan && (
                 <>
-                  <span className="h-1 w-1 rounded-full bg-gray-500" />
+                  <span
+                    className="h-1 w-1 rounded-full"
+                    style={{ background: 'rgba(255,255,255,0.2)' }}
+                  />
                   <span>{lifespan}</span>
                 </>
               )}
             </div>
 
-            {/* 标签 */}
+            {/* Tags */}
             {author.tags && author.tags.length > 0 && (
-              <div className="mt-4 flex flex-wrap justify-center gap-2">
+              <div className="float-up float-up-delay-3 mt-6 flex flex-wrap justify-center gap-2.5">
                 {author.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full bg-white/10 px-3.5 py-1 text-sm font-medium text-gray-200 backdrop-blur-sm border border-white/10"
+                    className="px-4 py-1.5 text-sm font-medium text-gray-200"
+                    style={{
+                      borderRadius: 'var(--radius-md)',
+                      background: 'rgba(255,255,255,0.08)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      backdropFilter: 'blur(12px)',
+                    }}
                   >
                     {tag}
                   </span>
@@ -123,83 +159,154 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
         </div>
       </section>
 
-      {/* 白色背景区域 */}
-      <div className="bg-gradient-to-b from-slate-50 to-white">
+      {/* Content area */}
+      <div style={{ background: 'var(--background)' }}>
         <div className="mx-auto max-w-4xl px-6">
-          {/* 简介 */}
-          <section className="py-10">
-            <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900">
-              <span className="h-6 w-1 rounded-full bg-gradient-to-b from-indigo-500 to-purple-500" />
+          {/* Bio */}
+          <section className="py-14">
+            <h2
+              className="flex items-center gap-3 text-xl font-bold"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              <span
+                className="h-6 w-1 rounded-full"
+                style={{ background: 'linear-gradient(to bottom, var(--accent), #a855f7)' }}
+              />
               关于作者
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-gray-600">
+            <p
+              className="mt-6 text-base leading-[1.9]"
+              style={{ color: 'var(--text-secondary)' }}
+            >
               {author.bio}
             </p>
           </section>
 
-          {/* 主要成就 */}
+          {/* Achievements */}
           {author.achievements && author.achievements.length > 0 && (
-            <section className="pb-10">
-              <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900">
-                <span className="h-6 w-1 rounded-full bg-gradient-to-b from-yellow-400 to-orange-500" />
+            <section className="pb-14">
+              <h2
+                className="flex items-center gap-3 text-xl font-bold"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                <span
+                  className="h-6 w-1 rounded-full"
+                  style={{ background: 'linear-gradient(to bottom, var(--warm), #ef4444)' }}
+                />
                 主要成就
               </h2>
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {author.achievements.map((achievement, i) => (
                   <div
                     key={i}
-                    className="flex items-start gap-3 rounded-xl bg-gradient-to-r from-yellow-50 to-orange-50 p-4 border border-yellow-100/50"
+                    className="flex items-start gap-4"
+                    style={{
+                      padding: '1.25rem 1.5rem',
+                      borderRadius: 'var(--radius-lg)',
+                      background: 'var(--surface)',
+                      boxShadow: 'var(--shadow-card)',
+                      border: '1px solid var(--border-subtle)',
+                      transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                    }}
                   >
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-yellow-400 to-orange-400 text-xs font-bold text-white">
+                    <span
+                      className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                      style={{
+                        background: 'linear-gradient(135deg, var(--warm), #ef4444)',
+                        boxShadow: '0 4px 12px rgba(245, 158, 11, 0.25)',
+                      }}
+                    >
                       {i + 1}
                     </span>
-                    <span className="text-sm text-gray-700">{achievement}</span>
+                    <span
+                      className="text-sm leading-relaxed"
+                      style={{ color: 'var(--text-secondary)' }}
+                    >
+                      {achievement}
+                    </span>
                   </div>
                 ))}
               </div>
             </section>
           )}
 
-          {/* 该作者的书籍 */}
+          {/* Books by this author */}
           {books.length > 0 && (
-            <section className="pb-20">
-              <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900">
-                <span className="h-6 w-1 rounded-full bg-gradient-to-b from-green-400 to-emerald-500" />
+            <section className="pb-28">
+              <h2
+                className="flex items-center gap-3 text-xl font-bold"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                <span
+                  className="h-6 w-1 rounded-full"
+                  style={{ background: 'linear-gradient(to bottom, var(--success), #059669)' }}
+                />
                 该作者的书籍
-                <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
+                <span
+                  className="px-3 py-1 text-xs font-semibold"
+                  style={{
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'rgba(16, 185, 129, 0.08)',
+                    color: 'var(--success)',
+                    border: '1px solid rgba(16, 185, 129, 0.12)',
+                  }}
+                >
                   {books.length} 本
                 </span>
               </h2>
 
-              <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+              <div className="mt-8 grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
                 {books.map((book) => (
                   <Link key={book.id} href={`/book/${book.id}`} className="group block">
-                    <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                      {/* 封面 */}
+                    <div
+                      className="overflow-hidden"
+                      style={{
+                        borderRadius: 'var(--radius-xl)',
+                        background: 'var(--surface)',
+                        boxShadow: 'var(--shadow-card)',
+                        border: '1px solid var(--border-subtle)',
+                        transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                      }}
+                    >
+                      {/* Cover */}
                       <div
-                        className="relative flex h-40 items-center justify-center p-3"
+                        className="relative flex h-48 items-center justify-center p-5"
                         style={{ background: getBookGradient(book.title) }}
                       >
-                        <h3 className="text-center text-base font-bold leading-tight text-white drop-shadow-md">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-white/12" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-transparent" />
+                        <h3 className="relative z-10 text-center text-base font-bold leading-tight text-white drop-shadow-lg">
                           {book.title}
                         </h3>
-                        {/* 评分徽章 */}
-                        <div className="absolute right-2 top-2">
+                        {/* Rating badge */}
+                        <div className="absolute right-3 top-3">
                           <RatingBadge score={book.score} rating={book.rating} size="sm" />
                         </div>
                       </div>
 
-                      {/* 信息 */}
-                      <div className="p-3">
-                        <div className="flex flex-wrap gap-1">
+                      {/* Info */}
+                      <div className="p-4">
+                        <div className="flex flex-wrap gap-1.5">
                           {book.categories.slice(0, 2).map((cat) => (
-                            <span key={cat} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">
+                            <span
+                              key={cat}
+                              className="px-2.5 py-0.5 text-xs font-medium"
+                              style={{
+                                borderRadius: 'var(--radius-sm)',
+                                background: 'rgba(99, 102, 241, 0.06)',
+                                color: 'var(--text-tertiary)',
+                                border: '1px solid var(--border-subtle)',
+                              }}
+                            >
                               {cat}
                             </span>
                           ))}
                         </div>
                         {book.totalReaders && (
-                          <p className="mt-1.5 text-xs text-gray-400">
+                          <p
+                            className="mt-2.5 text-xs font-medium"
+                            style={{ color: 'var(--text-tertiary)' }}
+                          >
                             {(book.totalReaders / 10000).toFixed(1)}万人读过
                           </p>
                         )}
@@ -214,7 +321,14 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 bg-white py-8 text-center text-sm text-gray-400">
+      <footer
+        className="py-12 text-center text-sm"
+        style={{
+          background: 'var(--surface)',
+          borderTop: '1px solid var(--border-subtle)',
+          color: 'var(--text-tertiary)',
+        }}
+      >
         <p>&copy; {new Date().getFullYear()} Read Is Big. 让阅读更高效。</p>
       </footer>
     </div>

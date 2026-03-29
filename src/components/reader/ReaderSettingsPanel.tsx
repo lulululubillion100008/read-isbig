@@ -32,42 +32,73 @@ export default function ReaderSettingsPanel({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
-      {/* 半透明遮罩 */}
-      <div className="absolute inset-0 bg-black/40" />
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'rgba(0, 0, 0, 0.25)',
+          backdropFilter: 'blur(12px) saturate(1.8)',
+          WebkitBackdropFilter: 'blur(12px) saturate(1.8)',
+          animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      />
 
-      {/* 设置面板 */}
+      {/* Settings panel */}
       <div
         ref={panelRef}
-        className="relative z-10 w-full max-w-md rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl sm:m-4"
-        style={{ animation: 'slideUp 0.3s ease-out' }}
+        className="glass relative z-10 w-full max-w-md sm:m-4"
+        style={{
+          borderRadius: 'var(--radius-2xl) var(--radius-2xl) 0 0',
+          boxShadow: 'var(--shadow-xl)',
+          padding: '28px 28px 36px',
+          animation: 'settingsPanelIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+          border: '1px solid var(--border-subtle)',
+          borderBottom: 'none',
+        }}
       >
-        {/* 标题 */}
-        <h2 className="mb-5 text-center text-lg font-semibold text-gray-800">
+        {/* Handle bar (mobile) */}
+        <div className="mb-6 flex justify-center sm:hidden">
+          <div
+            className="h-[5px] w-10 rounded-full"
+            style={{ background: 'var(--border-default)', opacity: 0.5 }}
+          />
+        </div>
+
+        {/* Title */}
+        <h2
+          className="mb-7 text-center text-[15px] font-semibold tracking-wide"
+          style={{ color: 'var(--text-primary)' }}
+        >
           阅读设置
         </h2>
 
-        {/* 字体选择区域 */}
-        <div className="mb-5">
-          <label className="mb-2 block text-sm font-medium text-gray-600">
+        {/* Font selection */}
+        <div className="mb-7">
+          <label
+            className="mb-3.5 block text-[11px] font-medium uppercase tracking-[0.12em]"
+            style={{ color: 'var(--text-tertiary)' }}
+          >
             字体
           </label>
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5">
             {FONT_OPTIONS_LIST.map((font) => {
               const isSelected = settings.fontFamily === font.value;
               return (
                 <button
                   key={font.value}
                   onClick={() => onUpdateSettings({ fontFamily: font.value })}
-                  className={`rounded-lg border-2 px-2 py-2.5 text-sm transition-all ${
-                    isSelected
-                      ? 'border-current shadow-sm'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
+                  className="relative overflow-hidden px-2 py-3.5 text-sm transition-all"
                   style={{
                     fontFamily: font.css,
-                    borderColor: isSelected ? theme.primaryColor : undefined,
-                    color: isSelected ? theme.primaryColor : '#374151',
-                    backgroundColor: isSelected ? `${theme.primaryColor}08` : undefined,
+                    borderRadius: 'var(--radius-lg)',
+                    color: isSelected ? theme.primaryColor : 'var(--text-secondary)',
+                    background: isSelected ? `${theme.primaryColor}08` : 'rgba(0,0,0,0.02)',
+                    border: `1.5px solid ${isSelected ? `${theme.primaryColor}40` : 'var(--border-subtle)'}`,
+                    boxShadow: isSelected
+                      ? `0 0 0 1px ${theme.primaryColor}15, var(--shadow-sm)`
+                      : 'none',
+                    fontWeight: isSelected ? 600 : 400,
+                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                   }}
                 >
                   {font.label}
@@ -77,41 +108,74 @@ export default function ReaderSettingsPanel({
           </div>
         </div>
 
-        {/* 字号选择区域 */}
-        <div className="mb-5">
-          <label className="mb-2 block text-sm font-medium text-gray-600">
+        {/* Font size */}
+        <div className="mb-7">
+          <label
+            className="mb-3.5 block text-[11px] font-medium uppercase tracking-[0.12em]"
+            style={{ color: 'var(--text-tertiary)' }}
+          >
             字号
           </label>
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-gray-400" style={{ fontSize: '12px' }}>
+          <div className="flex items-center gap-4">
+            <span
+              className="text-xs font-medium"
+              style={{ color: 'var(--text-tertiary)', fontSize: '12px' }}
+            >
               A
             </span>
-            <input
-              type="range"
-              min={14}
-              max={24}
-              step={1}
-              value={settings.fontSize}
-              onChange={(e) =>
-                onUpdateSettings({ fontSize: Number(e.target.value) })
-              }
-              className="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-gray-200"
+            <div className="relative flex-1">
+              <input
+                type="range"
+                min={14}
+                max={24}
+                step={1}
+                value={settings.fontSize}
+                onChange={(e) =>
+                  onUpdateSettings({ fontSize: Number(e.target.value) })
+                }
+                className="h-1 w-full cursor-pointer appearance-none rounded-full"
+                style={{
+                  background: `linear-gradient(to right, ${theme.primaryColor} 0%, ${theme.primaryColor} ${((settings.fontSize - 14) / 10) * 100}%, var(--border-subtle) ${((settings.fontSize - 14) / 10) * 100}%, var(--border-subtle) 100%)`,
+                  accentColor: theme.primaryColor,
+                }}
+              />
+            </div>
+            <span
+              className="font-semibold"
+              style={{ color: 'var(--text-tertiary)', fontSize: '18px' }}
+            >
+              A
+            </span>
+            <span
+              className="ml-1 min-w-[3.5ch] text-center text-xs font-medium tabular-nums"
               style={{
-                accentColor: theme.primaryColor,
+                color: theme.primaryColor,
+                background: `${theme.primaryColor}08`,
+                padding: '3px 8px',
+                borderRadius: 'var(--radius-md)',
+                border: `1px solid ${theme.primaryColor}15`,
               }}
-            />
-            <span className="text-lg font-bold text-gray-400" style={{ fontSize: '20px' }}>
-              A
-            </span>
-            <span className="ml-1 min-w-[3ch] text-center text-sm text-gray-500">
-              {settings.fontSize}px
+            >
+              {settings.fontSize}
             </span>
           </div>
         </div>
 
-        {/* 预览区域 */}
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-          <label className="mb-2 block text-xs font-medium text-gray-400">
+        {/* Preview */}
+        <div
+          className="overflow-hidden"
+          style={{
+            borderRadius: 'var(--radius-xl)',
+            background: 'rgba(0,0,0,0.015)',
+            border: '1px solid var(--border-subtle)',
+            padding: '20px 24px',
+            boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.02)',
+          }}
+        >
+          <label
+            className="mb-3 block text-[10px] font-medium uppercase tracking-[0.12em]"
+            style={{ color: 'var(--text-tertiary)' }}
+          >
             预览效果
           </label>
           <p
@@ -120,8 +184,9 @@ export default function ReaderSettingsPanel({
                 FONT_OPTIONS_LIST.find((f) => f.value === settings.fontFamily)
                   ?.css || FONT_OPTIONS_LIST[0].css,
               fontSize: `${settings.fontSize}px`,
-              lineHeight: 1.8,
-              color: '#1f2937',
+              lineHeight: 1.9,
+              color: 'var(--text-primary)',
+              letterSpacing: '0.01em',
             }}
           >
             人类之所以能统治世界，是因为我们是唯一能编造并相信虚构故事的动物。
@@ -129,9 +194,13 @@ export default function ReaderSettingsPanel({
         </div>
       </div>
 
-      {/* 滑出动画 */}
+      {/* Animations */}
       <style>{`
-        @keyframes slideUp {
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes settingsPanelIn {
           from {
             transform: translateY(100%);
             opacity: 0;
@@ -142,15 +211,21 @@ export default function ReaderSettingsPanel({
           }
         }
         @media (min-width: 640px) {
-          @keyframes slideUp {
+          @keyframes settingsPanelIn {
             from {
-              transform: scale(0.95);
+              transform: scale(0.9) translateY(16px);
               opacity: 0;
             }
             to {
-              transform: scale(1);
+              transform: scale(1) translateY(0);
               opacity: 1;
             }
+          }
+        }
+        @media (min-width: 640px) {
+          .glass {
+            border-radius: var(--radius-2xl) !important;
+            border-bottom: 1px solid var(--border-subtle) !important;
           }
         }
       `}</style>

@@ -19,16 +19,22 @@ interface SummaryReaderProps {
 
 const variants = {
   enter: (direction: number) => ({
-    x: direction > 0 ? '100%' : '-100%',
+    x: direction > 0 ? '40%' : '-40%',
     opacity: 0,
+    scale: 0.98,
+    filter: 'blur(4px)',
   }),
   center: {
     x: 0,
     opacity: 1,
+    scale: 1,
+    filter: 'blur(0px)',
   },
   exit: (direction: number) => ({
-    x: direction > 0 ? '-100%' : '100%',
+    x: direction > 0 ? '-40%' : '40%',
     opacity: 0,
+    scale: 0.98,
+    filter: 'blur(4px)',
   }),
 };
 
@@ -102,60 +108,104 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
   if (!page) return null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50" {...swipeHandlers}>
-      {/* 顶部操作栏 */}
-      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3">
-        {/* 返回首页按钮 */}
-        <Link
-          href="/"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm transition-colors hover:bg-black/40"
-          title="返回首页"
+    <div className="flex min-h-screen flex-col" style={{ background: 'var(--background)' }} {...swipeHandlers}>
+      {/* Floating glass toolbar */}
+      <div className="absolute top-0 left-0 right-0 z-30 px-4 pt-4 sm:px-6 sm:pt-5">
+        <div
+          className="glass mx-auto flex max-w-2xl items-center justify-between px-4 py-2.5 sm:px-5 sm:py-3"
+          style={{
+            borderRadius: 'var(--radius-2xl)',
+            boxShadow: 'var(--shadow-lg)',
+            border: '1px solid var(--border-subtle)',
+          }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5" />
-            <path d="m12 19-7-7 7-7" />
-          </svg>
-        </Link>
-
-        <div className="flex items-center gap-2">
-          {/* 播客模式按钮 */}
-          <button
-            onClick={() => {
-              if (!showPlayer) {
-                setShowPlayer(true);
-                tts.play(currentPage);
-              } else {
-                tts.stop();
-                setShowPlayer(false);
-              }
+          {/* Back button */}
+          <Link
+            href="/"
+            className="group flex h-9 w-9 items-center justify-center transition-all"
+            style={{
+              color: 'var(--text-secondary)',
+              borderRadius: 'var(--radius-lg)',
             }}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm transition-colors hover:bg-black/40"
-            title={showPlayer ? '关闭播客模式' : '播客模式'}
+            title="返回首页"
           >
-            {showPlayer ? (
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M6 6h12v12H6z" />
-              </svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                <line x1="12" x2="12" y1="19" y2="22" />
-              </svg>
-            )}
-          </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="transition-transform duration-300 group-hover:-translate-x-0.5"
+              style={{ transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}
+            >
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg>
+          </Link>
 
-          {/* 设置按钮 */}
-          <button
-            onClick={() => setShowSettings(true)}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm transition-colors hover:bg-black/40"
-            title="阅读设置"
-          >
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-        </button>
+          {/* Right controls */}
+          <div className="flex items-center gap-1">
+            {/* TTS button */}
+            <button
+              onClick={() => {
+                if (!showPlayer) {
+                  setShowPlayer(true);
+                  tts.play(currentPage);
+                } else {
+                  tts.stop();
+                  setShowPlayer(false);
+                }
+              }}
+              className="flex h-9 w-9 items-center justify-center transition-all"
+              style={{
+                color: showPlayer ? 'var(--accent)' : 'var(--text-secondary)',
+                borderRadius: 'var(--radius-lg)',
+                background: showPlayer ? 'var(--accent-bg, rgba(0,0,0,0.04))' : 'transparent',
+              }}
+              title={showPlayer ? '关闭播客模式' : '播客模式'}
+            >
+              {showPlayer ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="6" y="6" width="12" height="12" rx="2.5" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" x2="12" y1="19" y2="22" />
+                </svg>
+              )}
+            </button>
+
+            {/* Divider */}
+            <div
+              className="mx-1 h-4 w-px"
+              style={{
+                background: 'var(--border-subtle)',
+                opacity: 0.6,
+              }}
+            />
+
+            {/* Settings button */}
+            <button
+              onClick={() => setShowSettings(true)}
+              className="flex h-9 w-9 items-center justify-center transition-all"
+              style={{
+                color: 'var(--text-secondary)',
+                borderRadius: 'var(--radius-lg)',
+              }}
+              title="阅读设置"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -169,7 +219,11 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
+            transition={{
+              type: 'tween',
+              duration: 0.45,
+              ease: [0.16, 1, 0.3, 1],
+            }}
             className="absolute inset-0"
           >
             <SummaryPage

@@ -27,39 +27,76 @@ function getBookGradient(title: string): string {
 export default function BookListCard({ book }: BookListCardProps) {
   return (
     <Link href={`/book/${book.id}`} className="group block">
-      <div className="flex gap-4 rounded-2xl border border-gray-100 bg-white/80 p-4 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-gray-200">
-        {/* 左侧封面 */}
+      <div
+        className="flex gap-5"
+        style={{
+          padding: '1.25rem',
+          borderRadius: 'var(--radius-xl)',
+          background: 'var(--surface)',
+          boxShadow: 'var(--shadow-card)',
+          border: '1px solid var(--border-subtle)',
+          transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
+        {/* Cover */}
         <div
-          className="flex h-28 w-20 shrink-0 items-center justify-center rounded-xl shadow-md"
-          style={{ background: getBookGradient(book.title) }}
+          className="flex h-32 w-22 shrink-0 items-center justify-center overflow-hidden"
+          style={{
+            width: '5.5rem',
+            borderRadius: 'var(--radius-md)',
+            background: getBookGradient(book.title),
+            boxShadow: 'var(--shadow-md)',
+            transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
         >
           <span className="px-2 text-center text-xs font-bold leading-tight text-white drop-shadow-md">
             {book.title}
           </span>
         </div>
 
-        {/* 中间信息 */}
-        <div className="flex min-w-0 flex-1 flex-col justify-between">
+        {/* Info */}
+        <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5">
           <div>
-            <h3 className="text-base font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
+            <h3
+              className="text-base font-bold"
+              style={{
+                color: 'var(--text-primary)',
+                transition: 'color 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+            >
               {book.title}
             </h3>
             <Link
               href={`/author/${book.authorId}`}
-              className="mt-0.5 inline-block text-sm text-gray-500 hover:text-indigo-500 transition-colors"
+              className="mt-1 inline-block text-sm font-medium"
+              style={{
+                color: 'var(--text-secondary)',
+                transition: 'color 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
               onClick={(e) => e.stopPropagation()}
             >
               {book.author}
             </Link>
-            <p className="mt-1 text-xs text-gray-400 line-clamp-2">{book.description}</p>
+            <p
+              className="mt-1.5 text-xs leading-relaxed line-clamp-2"
+              style={{ color: 'var(--text-tertiary)' }}
+            >
+              {book.description}
+            </p>
           </div>
 
-          {/* 底部标签 */}
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          {/* Tags */}
+          <div className="mt-3 flex flex-wrap gap-1.5">
             {book.categories.map((cat) => (
               <span
                 key={cat}
-                className="inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500"
+                className="inline-block px-2.5 py-0.5 text-xs font-medium"
+                style={{
+                  borderRadius: 'var(--radius-sm)',
+                  background: 'rgba(99, 102, 241, 0.06)',
+                  color: 'var(--text-tertiary)',
+                  border: '1px solid var(--border-subtle)',
+                }}
               >
                 {cat}
               </span>
@@ -67,15 +104,26 @@ export default function BookListCard({ book }: BookListCardProps) {
           </div>
         </div>
 
-        {/* 右侧评分 */}
-        <div className="flex shrink-0 flex-col items-end justify-between">
+        {/* Rating */}
+        <div className="flex shrink-0 flex-col items-end justify-between py-0.5">
           <RatingBadge score={book.score} rating={book.rating} size="sm" />
           {book.totalReaders && (
-            <span className="text-xs text-gray-400">
+            <span
+              className="text-xs font-medium"
+              style={{ color: 'var(--text-tertiary)' }}
+            >
               {(book.totalReaders / 10000).toFixed(1)}万人读过
             </span>
           )}
         </div>
+
+        {/* Hover style */}
+        <style>{`
+          .group:hover > div:first-child {
+            box-shadow: var(--shadow-card-hover) !important;
+            transform: translateY(-1px);
+          }
+        `}</style>
       </div>
     </Link>
   );
