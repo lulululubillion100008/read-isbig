@@ -7,6 +7,8 @@ interface SummaryPageProps {
   book: Book;
   totalPages: number;
   theme: BookTheme;
+  fontFamily?: string;
+  fontSize?: number;
 }
 
 function BackgroundPattern({ pattern, color }: { pattern?: string; color: string }) {
@@ -38,7 +40,7 @@ function BackgroundPattern({ pattern, color }: { pattern?: string; color: string
   );
 }
 
-export default function SummaryPage({ page, book, totalPages, theme }: SummaryPageProps) {
+export default function SummaryPage({ page, book, totalPages, theme, fontFamily, fontSize }: SummaryPageProps) {
   const formattedDate = book.createdAt
     ? new Date(book.createdAt).toLocaleDateString('zh-CN', {
         year: 'numeric',
@@ -68,7 +70,7 @@ export default function SummaryPage({ page, book, totalPages, theme }: SummaryPa
         <MetadataBar bookTitle={book.title} date={formattedDate} theme={theme} />
 
         {/* Content - scrollable */}
-        <div className="relative flex-1 overflow-y-auto px-6 py-4">
+        <div className="relative flex-1 overflow-y-auto px-6 py-4" style={{ fontFamily, fontSize: fontSize ? `${fontSize}px` : undefined }}>
           <div className="flex flex-col gap-1">
             {page.sections.map((section, index) => (
               <MindMapSection key={index} section={section} theme={theme} />
