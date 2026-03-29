@@ -55,12 +55,7 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
   // 获取当前字体的CSS值
   const fontCSS = FONT_OPTIONS_LIST.find(f => f.value === settings.fontFamily)?.css || FONT_OPTIONS_LIST[0].css;
 
-  // 监听关闭设置面板事件
-  useEffect(() => {
-    const handleClose = () => setShowSettings(false);
-    window.addEventListener('closeSettingsPanel', handleClose);
-    return () => window.removeEventListener('closeSettingsPanel', handleClose);
-  }, []);
+  const closeSettings = useCallback(() => setShowSettings(false), []);
 
   const goToPage = useCallback(
     (page: number) => {
@@ -271,6 +266,7 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
         <ReaderSettingsPanel
           settings={settings}
           onUpdateSettings={updateSettings}
+          onClose={closeSettings}
           theme={summary.theme}
         />
       )}

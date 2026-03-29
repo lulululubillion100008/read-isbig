@@ -56,7 +56,6 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
   const handleComplete = () => {
     complete();
     setIsExiting(true);
-    setTimeout(onComplete, 500);
   };
 
   const canProceed = () => {
@@ -73,6 +72,9 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      onAnimationComplete={() => {
+        if (isExiting) onComplete();
+      }}
       className="fixed inset-0 z-[100] flex items-center justify-center"
       style={{
         background: 'linear-gradient(165deg, #0c1222 0%, #141830 30%, #1a1a2e 60%, #0f172a 100%)',

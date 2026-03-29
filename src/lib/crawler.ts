@@ -17,50 +17,74 @@ export interface CrawlConfig {
   apiKey?: string;
 }
 
+const ALLOWED_DOMAINS = ['search.douban.com', 'book.douban.com']
+
+function validateTargetUrl(url: string): void {
+  let parsed: URL
+  try {
+    parsed = new URL(url)
+  } catch {
+    throw new Error('Invalid URL')
+  }
+  if (parsed.protocol !== 'https:') {
+    throw new Error('Only HTTPS URLs are permitted')
+  }
+  if (!ALLOWED_DOMAINS.some(d => parsed.hostname === d || parsed.hostname.endsWith('.' + d))) {
+    throw new Error(`Domain not in allowlist: ${parsed.hostname}`)
+  }
+}
+
 // Crawl4AI API 调用
 export async function crawlBookData(bookTitle: string, config?: CrawlConfig): Promise<BookCrawlerData | null> {
   const crawlUrl = config?.apiUrl || process.env.CRAWL4AI_API_URL
 
   if (!crawlUrl) {
-    // Crawl4AI API URL not configured, skipping crawl
     return null
   }
 
   try {
-    // 抓取豆瓣读书信息
-    const doubanData = await crawlSource(crawlUrl, `https://search.douban.com/book/subject_search?search_text=${encodeURIComponent(bookTitle)}`, config?.apiKey)
+    const targetUrl = `https://search.douban.com/book/subject_search?search_text=${encodeURIComponent(bookTitle)}`
+    validateTargetUrl(targetUrl)
 
-    // 解析并返回结构化数据
+    const doubanData = await crawlSource(crawlUrl, targetUrl, config?.apiKey)
     return parseBookData(doubanData, bookTitle)
   } catch (error) {
-    console.error('[Crawler] Failed to crawl book data:', error)
+    console.error('[Crawler] Failed to crawl book data:', error instanceof Error ? error.message : 'unknown')
     return null
   }
 }
 
 async function crawlSource(apiUrl: string, targetUrl: string, apiKey?: string): Promise<string> {
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
-    },
-    body: JSON.stringify({
-      urls: [targetUrl],
-      word_count_threshold: 50,
-      extraction_strategy: 'LLMExtractionStrategy',
-    }),
-  })
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 15000)
 
-  if (!response.ok) throw new Error(`Crawl failed: ${response.status}`)
-  const data = await response.json()
-  return data.results?.[0]?.markdown || ''
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
+      },
+      body: JSON.stringify({
+        urls: [targetUrl],
+        word_count_threshold: 50,
+        extraction_strategy: 'LLMExtractionStrategy',
+      }),
+      signal: controller.signal,
+    })
+
+    if (!response.ok) throw new Error(`Crawl failed: ${response.status}`)
+    const data = await response.json()
+    return data.results?.[0]?.markdown || ''
+  } finally {
+    clearTimeout(timeout)
+  }
 }
 
 function parseBookData(markdown: string, bookTitle: string): BookCrawlerData {
   return {
     title: bookTitle,
     author: '',
-    synopsis: markdown.slice(0, 2000),
+    synopsis: markdown.slice(0, 3000),
   }
 }

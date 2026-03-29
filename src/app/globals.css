@@ -49,11 +49,6 @@
 }
 
 /* ===== Base ===== */
-*, *::before, *::after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 html {
   scroll-behavior: smooth;
 }
@@ -63,6 +58,8 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {

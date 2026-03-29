@@ -40,11 +40,12 @@ export async function POST(request: Request) {
       )
     }
 
-    const { bookId } = await request.json()
+    const body = await request.json()
+    const bookId = typeof body.bookId === 'string' ? body.bookId.trim() : ''
 
-    if (!bookId) {
+    if (!bookId || !/^[a-z][a-z0-9]{20,30}$/.test(bookId)) {
       return NextResponse.json(
-        { success: false, error: '缺少bookId' },
+        { success: false, error: '无效的bookId' },
         { status: 400 }
       )
     }
@@ -75,11 +76,12 @@ export async function DELETE(request: Request) {
       )
     }
 
-    const { bookId } = await request.json()
+    const body = await request.json()
+    const bookId = typeof body.bookId === 'string' ? body.bookId.trim() : ''
 
-    if (!bookId) {
+    if (!bookId || !/^[a-z][a-z0-9]{20,30}$/.test(bookId)) {
       return NextResponse.json(
-        { success: false, error: '缺少bookId' },
+        { success: false, error: '无效的bookId' },
         { status: 400 }
       )
     }

@@ -8,27 +8,27 @@ import type { BookTheme } from '@/lib/types';
 interface ReaderSettingsPanelProps {
   settings: ReaderSettings;
   onUpdateSettings: (updates: Partial<ReaderSettings>) => void;
+  onClose: () => void;
   theme: BookTheme;
 }
 
 export default function ReaderSettingsPanel({
   settings,
   onUpdateSettings,
+  onClose,
   theme,
 }: ReaderSettingsPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // 面板外点击关闭 - 通过父组件控制
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
-        // 派发自定义事件让父组件关闭面板
-        window.dispatchEvent(new CustomEvent('closeSettingsPanel'));
+        onClose();
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [onClose]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">

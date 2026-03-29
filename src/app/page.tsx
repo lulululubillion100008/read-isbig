@@ -9,11 +9,10 @@ export default function Home() {
   const excellentBooks = BOOK_DETAILS.filter((b) => b.rating === '佳作').sort((a, b) => b.score - a.score);
   const displayCategories = CATEGORIES.slice(0, 8);
 
+  const summaryByBookId = new Map(mockSummaries.map(s => [s.bookId, s]));
+
   return (
     <div className="flex min-h-screen flex-col bg-[var(--background)]">
-      {/* 个性化引导 (客户端组件) */}
-      <HomeClient />
-
       {/* Hero section - 参考 Apple Books 简洁大气风格 */}
       <header className="relative overflow-hidden">
         {/* 背景装饰 */}
@@ -91,7 +90,7 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 lg:gap-6">
           {masterpieces.map((book) => {
-            const summary = mockSummaries.find((s) => s.bookId === book.id);
+            const summary = summaryByBookId.get(book.id);
             if (summary) {
               return <BookCard key={summary.id} summary={summary} />;
             }
@@ -113,7 +112,7 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 lg:gap-6">
           {excellentBooks.map((book) => {
-            const summary = mockSummaries.find((s) => s.bookId === book.id);
+            const summary = summaryByBookId.get(book.id);
             if (summary) {
               return <BookCard key={summary.id} summary={summary} />;
             }

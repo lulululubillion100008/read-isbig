@@ -40,19 +40,23 @@ export async function POST(request: Request) {
       )
     }
 
-    const { bookId, lastReadPage } = await request.json()
+    const body = await request.json()
+    const bookId = typeof body.bookId === 'string' ? body.bookId.trim() : ''
 
-    if (!bookId) {
+    if (!bookId || !/^[a-z][a-z0-9]{20,30}$/.test(bookId)) {
       return NextResponse.json(
-        { success: false, error: '缺少bookId' },
+        { success: false, error: '无效的bookId' },
         { status: 400 }
       )
     }
 
+    const page = Number(body.lastReadPage)
+    const lastReadPage = Number.isInteger(page) && page >= 0 && page <= 10000 ? page : 0
+
     const record = await prisma.readingHistory.upsert({
       where: { userId_bookId: { userId, bookId } },
-      update: { lastReadPage: lastReadPage ?? 0, readAt: new Date() },
-      create: { userId, bookId, lastReadPage: lastReadPage ?? 0 },
+      update: { lastReadPage, readAt: new Date() },
+      create: { userId, bookId, lastReadPage },
     })
 
     return NextResponse.json({ success: true, data: record })

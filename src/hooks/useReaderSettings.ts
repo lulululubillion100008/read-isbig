@@ -25,13 +25,14 @@ export function useReaderSettings() {
       const saved = localStorage.getItem('readerSettings');
       if (saved) {
         try {
-          return JSON.parse(saved);
+          const parsed = JSON.parse(saved);
+          return { fontFamily: 'noto-sans' as FontFamily, fontSize: 16, ...parsed };
         } catch {
           // ignore malformed data
         }
       }
     }
-    return { fontFamily: 'noto-sans', fontSize: 16 };
+    return { fontFamily: 'noto-sans' as FontFamily, fontSize: 16 };
   });
 
   const updateSettings = useCallback((updates: Partial<ReaderSettings>) => {

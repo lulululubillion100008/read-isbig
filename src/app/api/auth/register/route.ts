@@ -6,7 +6,10 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
   try {
-    const { email, name, password } = await request.json()
+    const body = await request.json()
+    const email = typeof body.email === 'string' ? body.email.trim().slice(0, 255) : ''
+    const name = typeof body.name === 'string' ? body.name.trim().slice(0, 100) : ''
+    const password = typeof body.password === 'string' ? body.password.slice(0, 72) : ''
 
     if (!email || !name || !password) {
       return NextResponse.json(
@@ -26,6 +29,13 @@ export async function POST(request: Request) {
     if (password.length < 10) {
       return NextResponse.json(
         { success: false, error: '密码至少需要10个字符' },
+        { status: 400 }
+      )
+    }
+
+    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
+      return NextResponse.json(
+        { success: false, error: '密码需包含大写字母、小写字母和数字' },
         { status: 400 }
       )
     }
@@ -53,7 +63,7 @@ export async function POST(request: Request) {
       },
     })
   } catch (error) {
-    console.error('Register error:', error)
+    console.error('Register error:', error instanceof Error ? error.message : 'unknown')
     return NextResponse.json(
       { success: false, error: '注册失败，请稍后重试' },
       { status: 500 }

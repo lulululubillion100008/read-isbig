@@ -1,20 +1,21 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaLibSql } from '@prisma/adapter-libsql'
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined }
 
 function getPrismaClient(): PrismaClient {
   if (globalForPrisma.prisma) return globalForPrisma.prisma
 
-  const client = new PrismaClient()
-  if (process.env.NODE_ENV !== 'production') {
-    globalForPrisma.prisma = client
-  }
+  const adapter = new PrismaLibSql({
+    url: process.env.DATABASE_URL || 'file:./prisma/dev.db',
+  })
+
+  const client = new PrismaClient({
+    adapter,
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error'] : ['error'],
+  })
+  globalForPrisma.prisma = client
   return client
 }
 
-export const prisma = new Proxy({} as PrismaClient, {
-  get(_target, prop) {
-    const client = getPrismaClient()
-    return Reflect.get(client, prop)
-  },
-})
+export const prisma = getPrismaClient()

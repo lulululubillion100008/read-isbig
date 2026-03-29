@@ -1,17 +1,18 @@
 'use client'
 
-import { useState } from 'react'
-import type { UserProfile } from '@/lib/types'
+import { useState, useEffect, useRef } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 
 interface AuthModalProps {
   isOpen: boolean
   onClose: () => void
-  onLogin: (token: string, user: UserProfile) => void
+  onLogin?: () => void
 }
 
 type Tab = 'login' | 'register'
 
 export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) {
+  const { login, register } = useAuth()
   const [tab, setTab] = useState<Tab>('login')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -26,6 +27,49 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
   const [regPassword, setRegPassword] = useState('')
   const [regConfirm, setRegConfirm] = useState('')
 
+  const modalRef = useRef<HTMLDivElement>(null)
+  const titleId = 'auth-modal-title'
+
+  // Focus trap
+  useEffect(() => {
+    if (!isOpen) return
+
+    const modal = modalRef.current
+    if (!modal) return
+
+    const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    const focusFirst = () => {
+      const first = modal.querySelector<HTMLElement>(focusableSelector)
+      first?.focus()
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key !== 'Tab') return
+
+      const focusable = modal.querySelectorAll<HTMLElement>(focusableSelector)
+      if (focusable.length === 0) return
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    focusFirst()
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
+
   if (!isOpen) return null
 
   const switchTab = (t: Tab) => {
@@ -39,19 +83,11 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
     setLoading(true)
 
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
-      })
-      const data = await res.json()
-      if (!data.success) {
-        setError(data.error || '登录失败')
-        return
-      }
-      onLogin(data.data.token, data.data.user as UserProfile)
-    } catch {
-      setError('网络错误，请稍后重试')
+      await login(loginEmail, loginPassword)
+      onLogin?.()
+      onClose()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '登录失败')
     } finally {
       setLoading(false)
     }
@@ -65,31 +101,19 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
       setError('两次输入的密码不一致')
       return
     }
-    if (regPassword.length < 6) {
-      setError('密码至少需要6个字符')
+    if (regPassword.length < 10) {
+      setError('密码至少需要10个字符')
       return
     }
 
     setLoading(true)
 
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: regEmail,
-          name: regName,
-          password: regPassword,
-        }),
-      })
-      const data = await res.json()
-      if (!data.success) {
-        setError(data.error || '注册失败')
-        return
-      }
-      onLogin(data.data.token, data.data.user as UserProfile)
-    } catch {
-      setError('网络错误，请稍后重试')
+      await register(regName, regEmail, regPassword)
+      onLogin?.()
+      onClose()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '注册失败')
     } finally {
       setLoading(false)
     }
@@ -98,6 +122,9 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
       onClick={onClose}
     >
       {/* Glassmorphism backdrop */}
@@ -105,6 +132,7 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
 
       {/* Modal card */}
       <div
+        ref={modalRef}
         className="relative w-full max-w-md mx-4 bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -114,16 +142,17 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
         {/* Close button */}
         <button
           onClick={onClose}
+          aria-label="关闭"
           className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </button>
 
         <div className="px-8 pt-8 pb-2">
           {/* Title */}
-          <h2 className="text-2xl font-bold text-gray-800 mb-1">
+          <h2 id={titleId} className="text-2xl font-bold text-gray-800 mb-1">
             {tab === 'login' ? '欢迎回来' : '加入我们'}
           </h2>
           <p className="text-sm text-gray-400 mb-6">
@@ -131,13 +160,16 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
           </p>
 
           {/* Tab switcher */}
-          <div className="relative flex mb-6 bg-gray-100 rounded-2xl p-1">
+          <div className="relative flex mb-6 bg-gray-100 rounded-2xl p-1" role="tablist">
             <div
               className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-xl shadow-sm transition-transform duration-300 ease-out ${
                 tab === 'register' ? 'translate-x-[calc(100%+8px)]' : 'translate-x-0'
               }`}
             />
             <button
+              role="tab"
+              aria-selected={tab === 'login'}
+              aria-controls="login-panel"
               className={`relative z-10 flex-1 py-2.5 text-sm font-medium rounded-xl transition-colors duration-200 ${
                 tab === 'login' ? 'text-gray-800' : 'text-gray-400'
               }`}
@@ -146,6 +178,9 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
               登录
             </button>
             <button
+              role="tab"
+              aria-selected={tab === 'register'}
+              aria-controls="register-panel"
               className={`relative z-10 flex-1 py-2.5 text-sm font-medium rounded-xl transition-colors duration-200 ${
                 tab === 'register' ? 'text-gray-800' : 'text-gray-400'
               }`}
@@ -159,16 +194,18 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
         <div className="px-8 pb-8">
           {/* Error message */}
           {error && (
-            <div className="mb-4 px-4 py-3 bg-red-50 border border-red-100 text-red-500 text-sm rounded-xl">
+            <div className="mb-4 px-4 py-3 bg-red-50 border border-red-100 text-red-500 text-sm rounded-xl" role="alert">
               {error}
             </div>
           )}
 
           {/* Login form */}
           {tab === 'login' && (
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-4" id="login-panel" role="tabpanel">
               <div>
+                <label htmlFor="login-email" className="sr-only">邮箱地址</label>
                 <input
+                  id="login-email"
                   type="email"
                   placeholder="邮箱地址"
                   value={loginEmail}
@@ -178,7 +215,9 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
                 />
               </div>
               <div>
+                <label htmlFor="login-password" className="sr-only">密码</label>
                 <input
+                  id="login-password"
                   type="password"
                   placeholder="密码"
                   value={loginPassword}
@@ -194,7 +233,7 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
               >
                 {loading ? (
                   <span className="inline-flex items-center gap-2">
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
@@ -207,9 +246,11 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
 
           {/* Register form */}
           {tab === 'register' && (
-            <form onSubmit={handleRegister} className="space-y-4">
+            <form onSubmit={handleRegister} className="space-y-4" id="register-panel" role="tabpanel">
               <div>
+                <label htmlFor="reg-name" className="sr-only">昵称</label>
                 <input
+                  id="reg-name"
                   type="text"
                   placeholder="昵称"
                   value={regName}
@@ -219,7 +260,9 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
                 />
               </div>
               <div>
+                <label htmlFor="reg-email" className="sr-only">邮箱地址</label>
                 <input
+                  id="reg-email"
                   type="email"
                   placeholder="邮箱地址"
                   value={regEmail}
@@ -229,9 +272,11 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
                 />
               </div>
               <div>
+                <label htmlFor="reg-password" className="sr-only">密码（至少10位）</label>
                 <input
+                  id="reg-password"
                   type="password"
-                  placeholder="密码（至少6位）"
+                  placeholder="密码（至少10位）"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
                   required
@@ -239,7 +284,9 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
                 />
               </div>
               <div>
+                <label htmlFor="reg-confirm" className="sr-only">确认密码</label>
                 <input
+                  id="reg-confirm"
                   type="password"
                   placeholder="确认密码"
                   value={regConfirm}
@@ -255,7 +302,7 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
               >
                 {loading ? (
                   <span className="inline-flex items-center gap-2">
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
