@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import dynamic from 'next/dynamic';
 import BookSearch from './BookSearch';
 
@@ -22,14 +23,22 @@ function shouldShowOnboarding(): boolean {
 }
 
 export default function HomeClient() {
-  const [showOnboarding, setShowOnboarding] = useState(shouldShowOnboarding);
-  const [mounted] = useState(() => typeof window !== 'undefined');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    if (shouldShowOnboarding()) {
+      setShowOnboarding(true);
+    }
+  }, []);
 
   return (
     <>
       <BookSearch />
-      {mounted && showOnboarding && (
-        <OnboardingFlow onComplete={() => setShowOnboarding(false)} />
+      {mounted && showOnboarding && createPortal(
+        <OnboardingFlow onComplete={() => setShowOnboarding(false)} />,
+        document.body
       )}
     </>
   );

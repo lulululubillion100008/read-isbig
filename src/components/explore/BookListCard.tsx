@@ -66,17 +66,14 @@ export default function BookListCard({ book }: BookListCardProps) {
             >
               {book.title}
             </h3>
-            <Link
-              href={`/author/${book.authorId}`}
+            <span
               className="mt-1 inline-block text-sm font-medium"
               style={{
                 color: 'var(--text-secondary)',
-                transition: 'color 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
               }}
-              onClick={(e) => e.stopPropagation()}
             >
               {book.author}
-            </Link>
+            </span>
             <p
               className="mt-1.5 text-xs leading-relaxed line-clamp-2"
               style={{ color: 'var(--text-tertiary)' }}
@@ -117,13 +114,6 @@ export default function BookListCard({ book }: BookListCardProps) {
           )}
         </div>
 
-        {/* Hover style */}
-        <style>{`
-          .group:hover > div:first-child {
-            box-shadow: var(--shadow-card-hover) !important;
-            transform: translateY(-1px);
-          }
-        `}</style>
       </div>
     </Link>
   );

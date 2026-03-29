@@ -92,16 +92,6 @@ export default function CategoryCard({ category }: CategoryCardProps) {
           </div>
         </div>
 
-        {/* Hover overlay */}
-        <style>{`
-          .group:hover > div {
-            box-shadow: var(--shadow-card-hover) !important;
-            transform: translateY(-2px);
-          }
-          .group:hover > div > div:first-child {
-            opacity: 0.35 !important;
-          }
-        `}</style>
       </div>
     </Link>
   );

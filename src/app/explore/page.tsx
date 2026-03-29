@@ -73,13 +73,6 @@ function MasterpieceCard({ book }: { book: typeof BOOK_DETAILS[number] }) {
           </div>
         </div>
 
-        {/* Hover lift effect via inline style */}
-        <style>{`
-          .group:hover > div {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-card-hover) !important;
-          }
-        `}</style>
       </div>
     </Link>
   );
