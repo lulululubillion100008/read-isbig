@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CATEGORIES, getBooksByCategory } from '@/lib/mock-categories';
 import type { BookRating } from '@/lib/types';
@@ -5,6 +6,21 @@ import BookListCard from '@/components/explore/BookListCard';
 
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
+}
+
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { category: rawCategory } = await params;
+  const categoryName = decodeURIComponent(rawCategory);
+  const categoryInfo = CATEGORIES.find((c) => c.name === categoryName);
+
+  if (!categoryInfo) {
+    return { title: '未找到分类' };
+  }
+
+  return {
+    title: `${categoryInfo.name} - 探索 - Read Is Big`,
+    description: categoryInfo.description,
+  };
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {

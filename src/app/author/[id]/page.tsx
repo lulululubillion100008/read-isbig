@@ -1,9 +1,24 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAuthorById, getBooksByAuthor } from '@/lib/mock-categories';
 import RatingBadge from '@/components/explore/RatingBadge';
 
 interface AuthorPageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: AuthorPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const author = getAuthorById(id);
+
+  if (!author) {
+    return { title: '未找到作者' };
+  }
+
+  return {
+    title: `${author.name} - Read Is Big`,
+    description: author.bio ?? `了解作者${author.name}的作品与生平`,
+  };
 }
 
 // 根据书名生成渐变色

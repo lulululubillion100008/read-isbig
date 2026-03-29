@@ -22,7 +22,7 @@ export async function crawlBookData(bookTitle: string, config?: CrawlConfig): Pr
   const crawlUrl = config?.apiUrl || process.env.CRAWL4AI_API_URL
 
   if (!crawlUrl) {
-    console.log('[Crawler] Crawl4AI API URL not configured, skipping crawl')
+    // Crawl4AI API URL not configured, skipping crawl
     return null
   }
 

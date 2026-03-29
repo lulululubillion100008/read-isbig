@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 export interface OnboardingAnswers {
   interests: string[];      // 选择的兴趣分类
@@ -11,21 +11,22 @@ export interface OnboardingAnswers {
 
 const STORAGE_KEY = 'readisbig_onboarding';
 
-export function useOnboarding() {
-  const [isComplete, setIsComplete] = useState(true); // 默认true防止闪烁
-  const [answers, setAnswers] = useState<OnboardingAnswers>({ interests: [] });
-  const [step, setStep] = useState(0);
-
-  useEffect(() => {
+function loadFromStorage(): { answers: OnboardingAnswers; isComplete: boolean } {
+  if (typeof window === 'undefined') return { answers: { interests: [] }, isComplete: true };
+  try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved) as OnboardingAnswers;
-      setAnswers(parsed);
-      setIsComplete(!!parsed.completedAt);
-    } else {
-      setIsComplete(false);
+      return { answers: parsed, isComplete: !!parsed.completedAt };
     }
-  }, []);
+  } catch { /* corrupted data */ }
+  return { answers: { interests: [] }, isComplete: false };
+}
+
+export function useOnboarding() {
+  const [isComplete, setIsComplete] = useState(() => loadFromStorage().isComplete);
+  const [answers, setAnswers] = useState<OnboardingAnswers>(() => loadFromStorage().answers);
+  const [step, setStep] = useState(0);
 
   const saveAnswers = useCallback((updates: Partial<OnboardingAnswers>) => {
     setAnswers((prev) => {

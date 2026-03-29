@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import BookSearch from './BookSearch';
 
@@ -10,22 +10,21 @@ const OnboardingFlow = dynamic(
   { ssr: false }
 );
 
-export default function HomeClient() {
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [mounted, setMounted] = useState(false);
+function shouldShowOnboarding(): boolean {
+  if (typeof window === 'undefined') return false;
+  const saved = localStorage.getItem('readisbig_onboarding');
+  if (!saved) return true;
+  try {
+    const parsed = JSON.parse(saved);
+    return !parsed.completedAt;
+  } catch {
+    return true;
+  }
+}
 
-  useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem('readisbig_onboarding');
-    if (!saved) {
-      setShowOnboarding(true);
-    } else {
-      const parsed = JSON.parse(saved);
-      if (!parsed.completedAt) {
-        setShowOnboarding(true);
-      }
-    }
-  }, []);
+export default function HomeClient() {
+  const [showOnboarding, setShowOnboarding] = useState(shouldShowOnboarding);
+  const [mounted] = useState(() => typeof window !== 'undefined');
 
   return (
     <>

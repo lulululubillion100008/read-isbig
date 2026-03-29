@@ -1,5 +1,5 @@
 import type { BookRating } from '@/lib/types';
-import { getRatingColor, getRatingGradient } from '@/lib/types';
+import { getRatingGradient } from '@/lib/types';
 
 interface RatingBadgeProps {
   score: number;
@@ -8,7 +8,6 @@ interface RatingBadgeProps {
 }
 
 export default function RatingBadge({ score, rating, size = 'md' }: RatingBadgeProps) {
-  const color = getRatingColor(rating);
   const gradient = getRatingGradient(rating);
 
   const sizeClasses = {

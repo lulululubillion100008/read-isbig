@@ -23,7 +23,13 @@ export function useReaderSettings() {
     // 尝试从localStorage读取
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('readerSettings');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          // ignore malformed data
+        }
+      }
     }
     return { fontFamily: 'noto-sans', fontSize: 16 };
   });

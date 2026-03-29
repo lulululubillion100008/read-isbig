@@ -60,22 +60,31 @@ export async function generateBookSummary(options: GenerateSummaryOptions) {
     ? `请为《${bookTitle}》(${bookAuthor || '未知作者'})生成思维导图式读书笔记。以下是从网上搜集的书籍信息作为参考：\n\n${crawledData}`
     : `请为《${bookTitle}》(${bookAuthor || '未知作者'})生成思维导图式读书笔记。`
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 8192,
-      messages: [
-        { role: 'user', content: userMessage }
-      ],
-      system: systemPrompt,
-    }),
-  })
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 30000)
+
+  let response: Response
+  try {
+    response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2024-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 8192,
+        messages: [
+          { role: 'user', content: userMessage }
+        ],
+        system: systemPrompt,
+      }),
+      signal: controller.signal,
+    })
+  } finally {
+    clearTimeout(timeout)
+  }
 
   if (!response.ok) {
     throw new Error(`Claude API error: ${response.status}`)

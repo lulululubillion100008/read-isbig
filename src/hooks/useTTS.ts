@@ -71,6 +71,8 @@ export function useTTS(
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const shouldContinueRef = useRef(false);
   const totalCharsRef = useRef(0);
+  const speakPageRef = useRef<(pageNumber: number) => void>(() => {});
+  const nextPageTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 加载可用语音
   useEffect(() => {
@@ -142,9 +144,12 @@ export function useTTS(
           }));
           onPageChange?.(nextPage);
           // 短暂停顿后朗读下一页
-          setTimeout(() => {
+          if (nextPageTimeoutRef.current) {
+            clearTimeout(nextPageTimeoutRef.current);
+          }
+          nextPageTimeoutRef.current = setTimeout(() => {
             if (shouldContinueRef.current) {
-              speakPage(nextPage);
+              speakPageRef.current(nextPage);
             }
           }, 800);
         } else {
@@ -173,6 +178,11 @@ export function useTTS(
     },
     [pages, options, state.availableVoices, onPageChange]
   );
+
+  // Keep ref in sync
+  useEffect(() => {
+    speakPageRef.current = speakPage;
+  }, [speakPage]);
 
   // 播放
   const play = useCallback(
@@ -207,6 +217,10 @@ export function useTTS(
   // 停止
   const stop = useCallback(() => {
     shouldContinueRef.current = false;
+    if (nextPageTimeoutRef.current) {
+      clearTimeout(nextPageTimeoutRef.current);
+      nextPageTimeoutRef.current = null;
+    }
     speechSynthesis.cancel();
     setState((prev) => ({
       ...prev,
@@ -238,6 +252,9 @@ export function useTTS(
   // 清理
   useEffect(() => {
     return () => {
+      if (nextPageTimeoutRef.current) {
+        clearTimeout(nextPageTimeoutRef.current);
+      }
       speechSynthesis.cancel();
     };
   }, []);

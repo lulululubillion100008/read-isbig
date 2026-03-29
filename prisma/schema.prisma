@@ -33,30 +33,33 @@ model Book {
 model BookSummary {
   id          String   @id @default(cuid())
   bookId      String
-  book        Book     @relation(fields: [bookId], references: [id])
+  book        Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   pagesJson   String
   themeJson   String
   readingTime Int      @default(15)
   generatedAt DateTime @default(now())
+  @@index([bookId])
 }
 
 model ReadingHistory {
   id           String   @id @default(cuid())
   userId       String
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   bookId       String
-  book         Book     @relation(fields: [bookId], references: [id])
+  book         Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   lastReadPage Int      @default(0)
   readAt       DateTime @default(now())
   @@unique([userId, bookId])
+  @@index([userId])
 }
 
 model UserFavorite {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   bookId    String
-  book      Book     @relation(fields: [bookId], references: [id])
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   @@unique([userId, bookId])
+  @@index([userId])
 }

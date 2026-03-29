@@ -23,8 +23,18 @@ export const AuthContext = createContext<AuthContextType>({
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null)
-  const [token, setToken] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [token, setToken] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('auth_token')
+    }
+    return null
+  })
+  const [isLoading, setIsLoading] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !!localStorage.getItem('auth_token')
+    }
+    return true
+  })
 
   const saveAuth = useCallback((t: string, u: UserProfile) => {
     setToken(t)
@@ -42,17 +52,17 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     const stored = localStorage.getItem('auth_token')
     if (!stored) {
-      setIsLoading(false)
       return
     }
 
-    setToken(stored)
+    let cancelled = false
 
     fetch('/api/auth/me', {
       headers: { Authorization: `Bearer ${stored}` },
     })
       .then((res) => res.json())
       .then((data) => {
+        if (cancelled) return
         if (data.success && data.data?.user) {
           setUser(data.data.user as UserProfile)
         } else {
@@ -61,10 +71,15 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         }
       })
       .catch(() => {
+        if (cancelled) return
         localStorage.removeItem('auth_token')
         setToken(null)
       })
-      .finally(() => setIsLoading(false))
+      .finally(() => {
+        if (!cancelled) setIsLoading(false)
+      })
+
+    return () => { cancelled = true }
   }, [])
 
   const login = useCallback(

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { searchMockBooks } from '@/lib/mock-data';
 
@@ -27,23 +27,24 @@ export default function BookSearch() {
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
-    if (!query.trim()) {
-      setSuggestions([]);
-      setShowSuggestions(false);
-      return;
-    }
-
     debounceRef.current = setTimeout(() => {
-      const results = searchMockBooks(query);
-      setSuggestions(
-        results.map((s) => ({
-          bookId: s.bookId,
-          title: s.book.title,
-          author: s.book.author,
-        }))
-      );
-      setShowSuggestions(results.length > 0);
-    }, 300);
+      startTransition(() => {
+        if (!query.trim()) {
+          setSuggestions([]);
+          setShowSuggestions(false);
+          return;
+        }
+        const results = searchMockBooks(query);
+        setSuggestions(
+          results.map((s) => ({
+            bookId: s.bookId,
+            title: s.book.title,
+            author: s.book.author,
+          }))
+        );
+        setShowSuggestions(results.length > 0);
+      });
+    }, query.trim() ? 300 : 0);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);

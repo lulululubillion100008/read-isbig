@@ -1,5 +1,4 @@
 import type { CategoryInfo, Author, BookDetail } from '@/lib/types';
-import { getBookRating } from '@/lib/types';
 
 export const CATEGORIES: CategoryInfo[] = [
   { name: '创业', icon: '🚀', description: '创业思维与实战经验', bookCount: 42, color: '#FF6B35' },

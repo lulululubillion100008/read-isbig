@@ -11,6 +11,7 @@ import { useSwipe } from '@/hooks/useSwipe';
 import { useReaderSettings } from '@/hooks/useReaderSettings';
 import { FONT_OPTIONS_LIST } from '@/hooks/useReaderSettings';
 import { useTTS } from '@/hooks/useTTS';
+import Link from 'next/link';
 
 interface SummaryReaderProps {
   summary: BookSummary;
@@ -105,7 +106,7 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
       {/* 顶部操作栏 */}
       <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3">
         {/* 返回首页按钮 */}
-        <a
+        <Link
           href="/"
           className="flex h-9 w-9 items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm transition-colors hover:bg-black/40"
           title="返回首页"
@@ -114,7 +115,7 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
             <path d="M19 12H5" />
             <path d="m12 19-7-7 7-7" />
           </svg>
-        </a>
+        </Link>
 
         <div className="flex items-center gap-2">
           {/* 播客模式按钮 */}

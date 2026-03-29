@@ -21,9 +21,9 @@ export async function POST(request: Request) {
       )
     }
 
-    if (password.length < 6) {
+    if (password.length < 10) {
       return NextResponse.json(
-        { success: false, error: '密码至少需要6个字符' },
+        { success: false, error: '密码至少需要10个字符' },
         { status: 400 }
       )
     }
