@@ -1,0 +1,62 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  avatar    String?
+  createdAt DateTime @default(now())
+  history   ReadingHistory[]
+  favorites UserFavorite[]
+}
+
+model Book {
+  id         String   @id @default(cuid())
+  title      String
+  author     String
+  coverImage String?
+  category   String?
+  createdAt  DateTime @default(now())
+  summaries  BookSummary[]
+  history    ReadingHistory[]
+  favorites  UserFavorite[]
+}
+
+model BookSummary {
+  id          String   @id @default(cuid())
+  bookId      String
+  book        Book     @relation(fields: [bookId], references: [id])
+  pagesJson   String
+  themeJson   String
+  readingTime Int      @default(15)
+  generatedAt DateTime @default(now())
+}
+
+model ReadingHistory {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  bookId       String
+  book         Book     @relation(fields: [bookId], references: [id])
+  lastReadPage Int      @default(0)
+  readAt       DateTime @default(now())
+  @@unique([userId, bookId])
+}
+
+model UserFavorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  bookId    String
+  book      Book     @relation(fields: [bookId], references: [id])
+  createdAt DateTime @default(now())
+  @@unique([userId, bookId])
+}

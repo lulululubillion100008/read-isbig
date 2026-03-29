@@ -103,3 +103,77 @@ export interface ApiResponse<T> {
   data?: T;
   error?: string;
 }
+
+// 书籍分类
+export type BookCategory =
+  | '创业' | '管理' | '商业' | '经济'
+  | '心理学' | '哲学' | '自我成长'
+  | '文学' | '小说' | '散文' | '诗歌'
+  | '武侠' | '科幻' | '悬疑'
+  | '历史' | '传记' | '社科'
+  | '科技' | '编程' | '设计'
+  | '亲子' | '教育' | '健康';
+
+// 书籍评级
+export type BookRating = '神作' | '佳作' | '良作' | '普通';
+
+export function getBookRating(score: number): BookRating {
+  if (score >= 9.0) return '神作';
+  if (score >= 8.0) return '佳作';
+  if (score >= 7.0) return '良作';
+  return '普通';
+}
+
+// 评级颜色
+export function getRatingColor(rating: BookRating): string {
+  switch (rating) {
+    case '神作': return '#FF6B35';
+    case '佳作': return '#FFD700';
+    case '良作': return '#4CAF50';
+    default: return '#9E9E9E';
+  }
+}
+
+// 评级背景渐变
+export function getRatingGradient(rating: BookRating): string {
+  switch (rating) {
+    case '神作': return 'from-orange-500 to-red-500';
+    case '佳作': return 'from-yellow-400 to-orange-400';
+    case '良作': return 'from-green-400 to-emerald-500';
+    default: return 'from-gray-400 to-gray-500';
+  }
+}
+
+// 作者信息
+export interface Author {
+  id: string;
+  name: string;
+  avatar?: string;
+  nationality?: string;
+  birthYear?: number;
+  deathYear?: number;
+  bio: string;
+  achievements?: string[];
+  tags?: string[];
+}
+
+// 扩展Book接口
+export interface BookDetail extends Book {
+  score: number;
+  rating: BookRating;
+  categories: BookCategory[];
+  authorId: string;
+  authorInfo?: Author;
+  totalReaders?: number;
+  tags?: string[];
+  publishYear?: number;
+}
+
+// 分类信息
+export interface CategoryInfo {
+  name: BookCategory;
+  icon: string;
+  description: string;
+  bookCount: number;
+  color: string;
+}
