@@ -10,7 +10,10 @@ export default function MetadataBar({ bookTitle, date, theme }: MetadataBarProps
   return (
     <div
       className="flex flex-wrap items-center gap-x-6 gap-y-1 px-6 py-3.5 text-[13px] sm:px-10"
-      style={{ borderBottom: '1px solid var(--border-subtle)' }}
+      style={{
+        background: 'var(--surface-container-low)',
+        fontFamily: 'var(--font-label)',
+      }}
     >
       <span>
         <span style={{ color: 'var(--text-tertiary)' }}>内容来源: </span>

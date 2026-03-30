@@ -22,17 +22,16 @@ export default function PageNavigation({
     <div
       className="flex items-center justify-between px-4 py-3 sm:px-6"
       style={{
-        background: 'var(--surface)',
-        borderTop: '1px solid var(--border-subtle)',
+        background: 'var(--surface-container-low)',
       }}
     >
-      {/* Previous button */}
+      {/* Previous */}
       <button
         onClick={() => !isFirst && onPageChange(currentPage - 1)}
         disabled={isFirst}
-        className="flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all duration-300 active:scale-95 sm:px-6"
+        className="flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-all duration-300 active:scale-95 sm:px-6"
         style={{
-          background: isFirst ? 'var(--border-subtle)' : `${theme.primaryColor}10`,
+          background: isFirst ? 'var(--surface-container-high)' : `${theme.primaryColor}10`,
           color: isFirst ? 'var(--text-tertiary)' : theme.primaryColor,
           opacity: isFirst ? 0.5 : 1,
           cursor: isFirst ? 'default' : 'pointer',
@@ -44,7 +43,7 @@ export default function PageNavigation({
         <span className="hidden sm:inline">上一页</span>
       </button>
 
-      {/* Center: dots + page number */}
+      {/* Dots + page number */}
       <div className="flex flex-col items-center gap-2">
         <div className="flex items-center gap-2">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
@@ -58,9 +57,7 @@ export default function PageNavigation({
                 style={{
                   width: isActive ? 24 : 8,
                   height: 8,
-                  borderRadius: 100,
                   backgroundColor: isActive ? theme.primaryColor : `${theme.primaryColor}20`,
-                  boxShadow: isActive ? `0 2px 8px ${theme.primaryColor}30` : 'none',
                 }}
               />
             );
@@ -68,23 +65,22 @@ export default function PageNavigation({
         </div>
         <span
           className="text-xs font-medium tabular-nums"
-          style={{ color: 'var(--text-tertiary)', letterSpacing: '0.05em' }}
+          style={{ color: 'var(--text-tertiary)', letterSpacing: '0.05em', fontFamily: 'var(--font-label)' }}
         >
           {currentPage} / {totalPages}
         </span>
       </div>
 
-      {/* Next button */}
+      {/* Next */}
       <button
         onClick={() => !isLast && onPageChange(currentPage + 1)}
         disabled={isLast}
-        className="flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all duration-300 active:scale-95 sm:px-6"
+        className="flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-all duration-300 active:scale-95 sm:px-6"
         style={{
-          background: isLast ? 'var(--border-subtle)' : theme.primaryColor,
+          background: isLast ? 'var(--surface-container-high)' : theme.primaryColor,
           color: isLast ? 'var(--text-tertiary)' : '#ffffff',
           opacity: isLast ? 0.5 : 1,
           cursor: isLast ? 'default' : 'pointer',
-          boxShadow: isLast ? 'none' : `0 4px 12px ${theme.primaryColor}30`,
         }}
       >
         <span className="hidden sm:inline">下一页</span>

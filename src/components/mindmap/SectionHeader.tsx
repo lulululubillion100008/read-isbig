@@ -24,13 +24,14 @@ export default function SectionHeader({ title, depth = 0, theme }: SectionHeader
           color: 'var(--text-primary)',
           letterSpacing: depth === 0 ? '0.02em' : '0.01em',
           lineHeight: 1.4,
+          fontFamily: 'var(--font-serif)',
         }}
       >
         {title}
       </Tag>
       {depth === 0 && (
         <div
-          className="mt-2.5 h-[2.5px] w-10 rounded-full"
+          className="mt-2.5 h-[2.5px] w-10"
           style={{
             background: `linear-gradient(90deg, ${theme.primaryColor}, ${theme.primaryColor}40)`,
           }}

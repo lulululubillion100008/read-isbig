@@ -51,7 +51,7 @@ export default function SummaryPage({ page, book, totalPages, theme, fontFamily,
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Left sidebar */}
+      {/* Left sidebar - calligraphy scroll */}
       <BookSidebar
         book={book}
         pageNumber={page.pageNumber}
@@ -59,20 +59,20 @@ export default function SummaryPage({ page, book, totalPages, theme, fontFamily,
         theme={theme}
       />
 
-      {/* Main content area */}
+      {/* Main content - Rice Paper surface */}
       <div
         className="relative flex flex-1 flex-col overflow-hidden"
-        style={{ background: 'var(--surface)' }}
+        style={{ background: 'var(--surface-container-lowest)' }}
       >
         <BackgroundPattern pattern={theme.backgroundPattern} color={theme.primaryColor} />
 
         {/* Top banner */}
         <TopBanner title={page.chapterTitle} theme={theme} />
 
-        {/* Metadata bar */}
+        {/* Metadata */}
         <MetadataBar bookTitle={book.title} date={formattedDate} theme={theme} />
 
-        {/* Content - scrollable */}
+        {/* Content - scrollable with rice paper feel */}
         <div
           className="custom-scrollbar relative flex-1 overflow-y-auto px-6 py-8 sm:px-10 md:px-12 lg:px-16"
           style={{
@@ -88,7 +88,6 @@ export default function SummaryPage({ page, book, totalPages, theme, fontFamily,
             ))}
           </div>
 
-          {/* Bottom breathing room */}
           <div className="h-16" />
         </div>
       </div>

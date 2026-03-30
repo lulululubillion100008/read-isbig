@@ -3,16 +3,14 @@ import { CATEGORIES, BOOK_DETAILS } from '@/lib/mock-categories';
 import CategoryCard from '@/components/explore/CategoryCard';
 import RatingBadge from '@/components/explore/RatingBadge';
 
-// 神作推荐卡片
 function MasterpieceCard({ book }: { book: typeof BOOK_DETAILS[number] }) {
-  // 根据书名生成渐变色
   const colors = [
-    ['#667eea', '#764ba2'],
-    ['#f093fb', '#f5576c'],
-    ['#4facfe', '#00f2fe'],
-    ['#43e97b', '#38f9d7'],
-    ['#fa709a', '#fee140'],
-    ['#a18cd1', '#fbc2eb'],
+    ['#9a131d', '#BC2F32'],
+    ['#006a62', '#00a497'],
+    ['#004f87', '#0068ae'],
+    ['#59413f', '#8d706e'],
+    ['#9a131d', '#004f87'],
+    ['#006a62', '#BC2F32'],
   ];
   const index = book.title.charCodeAt(0) % colors.length;
   const gradient = `linear-gradient(135deg, ${colors[index][0]}, ${colors[index][1]})`;
@@ -20,34 +18,29 @@ function MasterpieceCard({ book }: { book: typeof BOOK_DETAILS[number] }) {
   return (
     <Link href={`/book/${book.id}`} className="group block">
       <div
-        className="relative w-44 shrink-0 overflow-hidden"
+        className="relative w-44 shrink-0 overflow-hidden transition-all duration-400"
         style={{
-          borderRadius: 'var(--radius-xl)',
-          boxShadow: 'var(--shadow-card)',
-          border: '1px solid var(--border-subtle)',
-          transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+          background: 'var(--surface-container-lowest)',
         }}
       >
-        {/* Cover */}
+        {/* Cover - ink wash gradient */}
         <div
           className="relative flex h-56 items-center justify-center p-4"
           style={{ background: gradient }}
         >
-          {/* Shimmer overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-white/15" />
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
-          <h3 className="relative z-10 text-center text-lg font-bold leading-tight text-white drop-shadow-lg">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-white/10" />
+          <h3
+            className="relative z-10 text-center text-lg font-bold leading-tight text-white drop-shadow-lg"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
             {book.title}
           </h3>
         </div>
 
-        {/* Info */}
+        {/* Info - tonal separation, no border */}
         <div
           className="relative p-4"
-          style={{
-            background: 'var(--surface)',
-            borderTop: '1px solid var(--border-subtle)',
-          }}
+          style={{ background: 'var(--surface-container-lowest)' }}
         >
           <div className="absolute -top-4 right-3">
             <RatingBadge score={book.score} rating={book.rating} size="sm" />
@@ -61,10 +54,9 @@ function MasterpieceCard({ book }: { book: typeof BOOK_DETAILS[number] }) {
                 key={cat}
                 className="px-2 py-0.5 text-xs font-medium"
                 style={{
-                  borderRadius: 'var(--radius-sm)',
-                  background: 'rgba(99, 102, 241, 0.06)',
+                  background: 'var(--surface-container-high)',
                   color: 'var(--text-tertiary)',
-                  border: '1px solid var(--border-subtle)',
+                  fontFamily: 'var(--font-label)',
                 }}
               >
                 {cat}
@@ -72,7 +64,6 @@ function MasterpieceCard({ book }: { book: typeof BOOK_DETAILS[number] }) {
             ))}
           </div>
         </div>
-
       </div>
     </Link>
   );
@@ -83,32 +74,47 @@ export default function ExplorePage() {
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--background)' }}>
-      {/* Header */}
+      {/* Header - glass nav */}
       <header className="glass sticky top-0 z-20">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link
             href="/"
-            className="text-base font-semibold"
-            style={{
-              color: 'var(--text-primary)',
-              transition: 'color 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            }}
+            className="text-base font-semibold transition-colors"
+            style={{ color: 'var(--text-primary)' }}
           >
             &larr; Read Is Big
           </Link>
+          <span
+            className="text-[10px] font-medium uppercase tracking-[0.3em]"
+            style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-label)' }}
+          >
+            Digital Archive
+          </span>
         </div>
       </header>
 
-      {/* Hero */}
+      {/* Hero - asymmetric editorial */}
       <section className="relative overflow-hidden px-6 pt-20 pb-16">
-        {/* Decorative blurs -- Apple/WeChat style */}
-        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-[#6366f1]/10 blur-[120px]" />
-        <div className="absolute -right-24 top-0 h-80 w-80 rounded-full bg-[#ec4899]/8 blur-[100px]" />
-        <div className="absolute left-1/3 top-24 h-64 w-64 rounded-full bg-[#a855f7]/8 blur-[100px]" />
-        <div className="absolute right-1/3 bottom-0 h-48 w-48 rounded-full bg-[#06b6d4]/6 blur-[80px]" />
+        <div className="absolute inset-0 ink-wash" />
+        <div className="absolute -left-32 -top-32 h-96 w-96 bg-[var(--primary)]/5 blur-[120px]" />
+        <div className="absolute -right-24 top-0 h-80 w-80 bg-[var(--tertiary)]/5 blur-[100px]" />
 
         <div className="relative mx-auto max-w-6xl">
-          <h1 className="float-up gradient-text text-5xl font-extrabold tracking-tight md:text-7xl">
+          {/* Lab protocol */}
+          <div className="mb-4 flex items-center gap-3">
+            <span
+              className="text-[10px] font-medium uppercase tracking-[0.3em]"
+              style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-label)' }}
+            >
+              Archive Protocol
+            </span>
+            <div className="h-px flex-1" style={{ background: 'var(--outline-variant)', opacity: 0.3 }} />
+          </div>
+
+          <h1
+            className="float-up text-5xl font-bold tracking-tight md:text-7xl"
+            style={{ fontFamily: 'var(--font-serif)', color: 'var(--text-primary)' }}
+          >
             探索
           </h1>
           <p
@@ -120,24 +126,26 @@ export default function ExplorePage() {
         </div>
       </section>
 
-      {/* Masterpiece recommendations */}
+      {/* Masterpiece section */}
       <section className="float-up float-up-delay-2 pb-20">
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex items-center gap-3 mb-10">
             <div
-              className="h-8 w-1.5 rounded-full"
-              style={{ background: 'linear-gradient(to bottom, var(--warm), #ef4444)' }}
+              className="h-8 w-1.5"
+              style={{ background: 'linear-gradient(to bottom, var(--primary), var(--primary-container))' }}
             />
-            <h2 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+            <h2
+              className="text-2xl font-bold tracking-tight"
+              style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}
+            >
               神作推荐
             </h2>
             <span
               className="px-3 py-1 text-xs font-semibold"
               style={{
-                borderRadius: 'var(--radius-sm)',
-                background: 'rgba(245, 158, 11, 0.1)',
-                color: 'var(--warm)',
-                border: '1px solid rgba(245, 158, 11, 0.15)',
+                background: 'var(--primary)',
+                color: 'var(--on-primary)',
+                fontFamily: 'var(--font-label)',
               }}
             >
               {masterpieces.length} 本
@@ -155,14 +163,17 @@ export default function ExplorePage() {
         </div>
       </section>
 
-      {/* Category browsing */}
+      {/* Category grid */}
       <section className="float-up float-up-delay-3 mx-auto max-w-6xl px-6 pb-28">
         <div className="flex items-center gap-3 mb-10">
           <div
-            className="h-8 w-1.5 rounded-full"
-            style={{ background: 'linear-gradient(to bottom, var(--accent), #a855f7)' }}
+            className="h-8 w-1.5"
+            style={{ background: 'linear-gradient(to bottom, var(--secondary), var(--tertiary))' }}
           />
-          <h2 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+          <h2
+            className="text-2xl font-bold tracking-tight"
+            style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}
+          >
             分类浏览
           </h2>
         </div>
@@ -174,12 +185,13 @@ export default function ExplorePage() {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer - tonal separation */}
       <footer
         className="py-12 text-center text-sm"
         style={{
-          borderTop: '1px solid var(--border-subtle)',
+          background: 'var(--surface-container-low)',
           color: 'var(--text-tertiary)',
+          fontFamily: 'var(--font-label)',
         }}
       >
         <p>&copy; {new Date().getFullYear()} Read Is Big. 让阅读更高效。</p>

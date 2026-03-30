@@ -23,7 +23,6 @@ export default function ConnectingLine({ children, theme, hasConnector = true }:
     >
       {children}
 
-      {/* Inline styles for the branch pseudo-elements */}
       <style>{`
         .connector-tree > * {
           position: relative;
@@ -36,7 +35,6 @@ export default function ConnectingLine({ children, theme, hasConnector = true }:
           width: 18px;
           height: 0;
           border-top: 1.5px solid ${theme.connectorColor}80;
-          border-radius: 0 1px 1px 0;
         }
         .connector-tree > *:last-child::after {
           content: '';
@@ -45,7 +43,7 @@ export default function ConnectingLine({ children, theme, hasConnector = true }:
           top: 14px;
           bottom: -1px;
           width: 2px;
-          background: var(--surface, #fff);
+          background: var(--surface-container-lowest, #fff);
         }
       `}</style>
     </div>

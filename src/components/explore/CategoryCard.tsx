@@ -9,37 +9,26 @@ export default function CategoryCard({ category }: CategoryCardProps) {
   return (
     <Link href={`/explore/${encodeURIComponent(category.name)}`} className="group block">
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden transition-all duration-400"
         style={{
-          borderRadius: 'var(--radius-xl)',
-          background: 'var(--surface)',
-          boxShadow: 'var(--shadow-card)',
-          border: '1px solid var(--border-subtle)',
-          transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+          background: 'var(--surface-container-lowest)',
           padding: '1.5rem',
         }}
       >
         {/* Decorative gradient orb */}
         <div
-          className="absolute -right-6 -top-6 h-24 w-24 rounded-full opacity-20 blur-2xl"
-          style={{
-            backgroundColor: category.color,
-            transition: 'opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
+          className="absolute -right-6 -top-6 h-24 w-24 opacity-15 blur-2xl"
+          style={{ backgroundColor: category.color }}
         />
         <div
-          className="absolute -bottom-4 -left-4 h-16 w-16 rounded-full opacity-10 blur-xl"
+          className="absolute -bottom-4 -left-4 h-16 w-16 opacity-8 blur-xl"
           style={{ backgroundColor: category.color }}
         />
 
-        {/* Accent bar */}
+        {/* Accent bar - visible on hover via group */}
         <div
-          className="absolute left-0 top-0 h-full w-1 opacity-0"
-          style={{
-            backgroundColor: category.color,
-            borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
-            transition: 'opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
+          className="absolute left-0 top-0 h-full w-1 opacity-0 transition-opacity duration-400 group-hover:opacity-100"
+          style={{ backgroundColor: category.color }}
         />
 
         {/* Content */}
@@ -47,19 +36,14 @@ export default function CategoryCard({ category }: CategoryCardProps) {
           <div
             className="flex h-12 w-12 items-center justify-center text-2xl"
             style={{
-              borderRadius: 'var(--radius-md)',
               background: `linear-gradient(135deg, ${category.color}18, ${category.color}30)`,
-              transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
             {category.icon}
           </div>
           <h3
             className="mt-3.5 text-base font-bold"
-            style={{
-              color: 'var(--text-primary)',
-              transition: 'color 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            }}
+            style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}
           >
             {category.name}
           </h3>
@@ -73,25 +57,21 @@ export default function CategoryCard({ category }: CategoryCardProps) {
             <span
               className="inline-flex items-center px-2.5 py-1 text-xs font-semibold"
               style={{
-                borderRadius: 'var(--radius-sm)',
                 background: `${category.color}14`,
                 color: category.color,
+                fontFamily: 'var(--font-label)',
               }}
             >
               {category.bookCount} 本书
             </span>
             <span
-              className="text-xs font-medium"
-              style={{
-                color: 'var(--text-tertiary)',
-                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-              }}
+              className="text-xs font-medium transition-all duration-300 group-hover:translate-x-1"
+              style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-label)' }}
             >
               查看 &rarr;
             </span>
           </div>
         </div>
-
       </div>
     </Link>
   );

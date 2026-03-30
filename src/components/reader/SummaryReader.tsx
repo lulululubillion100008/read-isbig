@@ -45,14 +45,12 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
   const { settings, updateSettings } = useReaderSettings();
   const totalPages = summary.pages.length;
 
-  // 播客模式 TTS
   const tts = useTTS(summary.pages, (page) => {
     setDirection(page > currentPage ? 1 : -1);
     setCurrentPage(page);
   });
   const [showPlayer, setShowPlayer] = useState(false);
 
-  // 获取当前字体的CSS值
   const fontCSS = FONT_OPTIONS_LIST.find(f => f.value === settings.fontFamily)?.css || FONT_OPTIONS_LIST[0].css;
 
   const closeSettings = useCallback(() => setShowSettings(false), []);
@@ -80,7 +78,6 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
     }
   }, [currentPage]);
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
@@ -93,7 +90,6 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [goNext, goPrev]);
 
-  // Swipe navigation
   const swipeHandlers = useSwipe({
     onSwipeLeft: goNext,
     onSwipeRight: goPrev,
@@ -104,24 +100,16 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
 
   return (
     <div className="flex min-h-screen flex-col" style={{ background: 'var(--background)' }} {...swipeHandlers}>
-      {/* Floating glass toolbar */}
+      {/* Floating glass toolbar - Scholar's Studio */}
       <div className="absolute top-0 left-0 right-0 z-30 px-4 pt-4 sm:px-6 sm:pt-5">
         <div
           className="glass mx-auto flex max-w-2xl items-center justify-between px-4 py-2.5 sm:px-5 sm:py-3"
-          style={{
-            borderRadius: 'var(--radius-2xl)',
-            boxShadow: 'var(--shadow-lg)',
-            border: '1px solid var(--border-subtle)',
-          }}
         >
-          {/* Back button */}
+          {/* Back - seal stamp style */}
           <Link
             href="/"
             className="group flex h-9 w-9 items-center justify-center transition-all"
-            style={{
-              color: 'var(--text-secondary)',
-              borderRadius: 'var(--radius-lg)',
-            }}
+            style={{ color: 'var(--text-secondary)' }}
             title="返回首页"
           >
             <svg
@@ -135,16 +123,23 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
               strokeLinecap="round"
               strokeLinejoin="round"
               className="transition-transform duration-300 group-hover:-translate-x-0.5"
-              style={{ transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}
             >
               <path d="M19 12H5" />
               <path d="m12 19-7-7 7-7" />
             </svg>
           </Link>
 
-          {/* Right controls */}
+          {/* Lab protocol indicator */}
+          <span
+            className="hidden sm:block text-[10px] font-medium uppercase tracking-[0.3em]"
+            style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-label)' }}
+          >
+            Reading Protocol
+          </span>
+
+          {/* Controls */}
           <div className="flex items-center gap-1">
-            {/* TTS button */}
+            {/* TTS */}
             <button
               onClick={() => {
                 if (!showPlayer) {
@@ -157,15 +152,14 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
               }}
               className="flex h-9 w-9 items-center justify-center transition-all"
               style={{
-                color: showPlayer ? 'var(--accent)' : 'var(--text-secondary)',
-                borderRadius: 'var(--radius-lg)',
-                background: showPlayer ? 'var(--accent-bg, rgba(0,0,0,0.04))' : 'transparent',
+                color: showPlayer ? 'var(--primary)' : 'var(--text-secondary)',
+                background: showPlayer ? 'rgba(154, 19, 29, 0.08)' : 'transparent',
               }}
               title={showPlayer ? '关闭播客模式' : '播客模式'}
             >
               {showPlayer ? (
                 <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
-                  <rect x="6" y="6" width="12" height="12" rx="2.5" />
+                  <rect x="6" y="6" width="12" height="12" />
                 </svg>
               ) : (
                 <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -176,23 +170,17 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
               )}
             </button>
 
-            {/* Divider */}
+            {/* Divider - ghost border */}
             <div
               className="mx-1 h-4 w-px"
-              style={{
-                background: 'var(--border-subtle)',
-                opacity: 0.6,
-              }}
+              style={{ background: 'var(--outline-variant)', opacity: 0.4 }}
             />
 
-            {/* Settings button */}
+            {/* Settings */}
             <button
               onClick={() => setShowSettings(true)}
               className="flex h-9 w-9 items-center justify-center transition-all"
-              style={{
-                color: 'var(--text-secondary)',
-                borderRadius: 'var(--radius-lg)',
-              }}
+              style={{ color: 'var(--text-secondary)' }}
               title="阅读设置"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -204,7 +192,7 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
         </div>
       </div>
 
-      {/* Page content with animation */}
+      {/* Page content */}
       <div className="relative flex-1 overflow-hidden">
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div
@@ -241,7 +229,7 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
         theme={summary.theme}
       />
 
-      {/* 播客模式播放条 */}
+      {/* Audio player */}
       {showPlayer && (
         <AudioPlayerBar
           state={tts.state}
@@ -261,7 +249,7 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
         />
       )}
 
-      {/* 设置面板 */}
+      {/* Settings panel */}
       {showSettings && (
         <ReaderSettingsPanel
           settings={settings}

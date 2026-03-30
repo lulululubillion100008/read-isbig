@@ -6,19 +6,18 @@ interface BookListCardProps {
   book: BookDetail;
 }
 
-// 根据书名生成渐变色
 function getBookGradient(title: string): string {
   const colors = [
-    ['#667eea', '#764ba2'],
-    ['#f093fb', '#f5576c'],
-    ['#4facfe', '#00f2fe'],
-    ['#43e97b', '#38f9d7'],
-    ['#fa709a', '#fee140'],
-    ['#a18cd1', '#fbc2eb'],
-    ['#fccb90', '#d57eeb'],
-    ['#e0c3fc', '#8ec5fc'],
-    ['#f5576c', '#ff6f91'],
-    ['#667eea', '#5FC3E4'],
+    ['#9a131d', '#BC2F32'],
+    ['#006a62', '#00a497'],
+    ['#004f87', '#0068ae'],
+    ['#59413f', '#8d706e'],
+    ['#9a131d', '#004f87'],
+    ['#006a62', '#BC2F32'],
+    ['#7a0e17', '#9a131d'],
+    ['#004f87', '#006a62'],
+    ['#BC2F32', '#59413f'],
+    ['#0068ae', '#006a62'],
   ];
   const index = title.charCodeAt(0) % colors.length;
   return `linear-gradient(135deg, ${colors[index][0]}, ${colors[index][1]})`;
@@ -28,28 +27,24 @@ export default function BookListCard({ book }: BookListCardProps) {
   return (
     <Link href={`/book/${book.id}`} className="group block">
       <div
-        className="flex gap-5"
+        className="flex gap-5 transition-all duration-400"
         style={{
           padding: '1.25rem',
-          borderRadius: 'var(--radius-xl)',
-          background: 'var(--surface)',
-          boxShadow: 'var(--shadow-card)',
-          border: '1px solid var(--border-subtle)',
-          transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+          background: 'var(--surface-container-lowest)',
         }}
       >
-        {/* Cover */}
+        {/* Cover - ink wash gradient */}
         <div
-          className="flex h-32 w-22 shrink-0 items-center justify-center overflow-hidden"
+          className="flex h-32 w-22 shrink-0 items-center justify-center overflow-hidden transition-transform duration-400 group-hover:scale-[1.02]"
           style={{
             width: '5.5rem',
-            borderRadius: 'var(--radius-md)',
             background: getBookGradient(book.title),
-            boxShadow: 'var(--shadow-md)',
-            transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         >
-          <span className="px-2 text-center text-xs font-bold leading-tight text-white drop-shadow-md">
+          <span
+            className="px-2 text-center text-xs font-bold leading-tight text-white drop-shadow-md"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
             {book.title}
           </span>
         </div>
@@ -59,18 +54,13 @@ export default function BookListCard({ book }: BookListCardProps) {
           <div>
             <h3
               className="text-base font-bold"
-              style={{
-                color: 'var(--text-primary)',
-                transition: 'color 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-              }}
+              style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}
             >
               {book.title}
             </h3>
             <span
               className="mt-1 inline-block text-sm font-medium"
-              style={{
-                color: 'var(--text-secondary)',
-              }}
+              style={{ color: 'var(--text-secondary)' }}
             >
               {book.author}
             </span>
@@ -82,17 +72,16 @@ export default function BookListCard({ book }: BookListCardProps) {
             </p>
           </div>
 
-          {/* Tags */}
+          {/* Tags - tonal bg, no border */}
           <div className="mt-3 flex flex-wrap gap-1.5">
             {book.categories.map((cat) => (
               <span
                 key={cat}
                 className="inline-block px-2.5 py-0.5 text-xs font-medium"
                 style={{
-                  borderRadius: 'var(--radius-sm)',
-                  background: 'rgba(99, 102, 241, 0.06)',
+                  background: 'var(--surface-container-high)',
                   color: 'var(--text-tertiary)',
-                  border: '1px solid var(--border-subtle)',
+                  fontFamily: 'var(--font-label)',
                 }}
               >
                 {cat}
@@ -107,13 +96,12 @@ export default function BookListCard({ book }: BookListCardProps) {
           {book.totalReaders && (
             <span
               className="text-xs font-medium"
-              style={{ color: 'var(--text-tertiary)' }}
+              style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-label)' }}
             >
               {(book.totalReaders / 10000).toFixed(1)}万人读过
             </span>
           )}
         </div>
-
       </div>
     </Link>
   );

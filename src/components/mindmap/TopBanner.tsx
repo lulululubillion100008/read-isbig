@@ -24,6 +24,7 @@ export default function TopBanner({ title, theme }: TopBannerProps) {
           color: theme.bannerText,
           lineHeight: 1.4,
           letterSpacing: '0.02em',
+          fontFamily: 'var(--font-serif)',
         }}
       >
         {title}

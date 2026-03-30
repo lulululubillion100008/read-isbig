@@ -26,9 +26,8 @@ export default function RatingBadge({ score, rating, size = 'md' }: RatingBadgeP
     <div
       className={`inline-flex items-center bg-gradient-to-r ${gradient} ${sizeClasses[size]} font-bold text-white`}
       style={{
-        borderRadius: 'var(--radius-2xl)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.25)',
-        border: '1px solid rgba(255,255,255,0.18)',
+        /* Square corners - woodblock print precision */
+        fontFamily: 'var(--font-label)',
         letterSpacing: '0.01em',
       }}
     >

@@ -12,12 +12,9 @@ export default function ContentCard({ children, theme, accent = false }: Content
     <div
       className="p-5 md:p-6"
       style={{
-        borderRadius: 'var(--radius-xl)',
-        background: 'var(--surface, #fff)',
-        border: '1px solid var(--border-subtle)',
-        boxShadow: 'var(--shadow-card)',
+        background: 'var(--surface-container-lowest)',
         ...(accent
-          ? { borderLeftWidth: '3px', borderLeftColor: `${theme.primaryColor}80` }
+          ? { borderLeft: `3px solid ${theme.primaryColor}80` }
           : {}),
         transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
       }}

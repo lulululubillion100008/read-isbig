@@ -36,38 +36,34 @@ export default function ReaderSettingsPanel({
       <div
         className="absolute inset-0"
         style={{
-          background: 'rgba(0, 0, 0, 0.25)',
-          backdropFilter: 'blur(12px) saturate(1.8)',
-          WebkitBackdropFilter: 'blur(12px) saturate(1.8)',
+          background: 'rgba(27, 28, 26, 0.25)',
+          backdropFilter: 'blur(16px) saturate(1.8)',
+          WebkitBackdropFilter: 'blur(16px) saturate(1.8)',
           animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       />
 
-      {/* Settings panel */}
+      {/* Settings panel - Glassmorphism */}
       <div
         ref={panelRef}
         className="glass relative z-10 w-full max-w-md sm:m-4"
         style={{
-          borderRadius: 'var(--radius-2xl) var(--radius-2xl) 0 0',
-          boxShadow: 'var(--shadow-xl)',
           padding: '28px 28px 36px',
           animation: 'settingsPanelIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-          border: '1px solid var(--border-subtle)',
-          borderBottom: 'none',
         }}
       >
         {/* Handle bar (mobile) */}
         <div className="mb-6 flex justify-center sm:hidden">
           <div
-            className="h-[5px] w-10 rounded-full"
-            style={{ background: 'var(--border-default)', opacity: 0.5 }}
+            className="h-[5px] w-10"
+            style={{ background: 'var(--outline-variant)', opacity: 0.5 }}
           />
         </div>
 
         {/* Title */}
         <h2
           className="mb-7 text-center text-[15px] font-semibold tracking-wide"
-          style={{ color: 'var(--text-primary)' }}
+          style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}
         >
           阅读设置
         </h2>
@@ -76,7 +72,7 @@ export default function ReaderSettingsPanel({
         <div className="mb-7">
           <label
             className="mb-3.5 block text-[11px] font-medium uppercase tracking-[0.12em]"
-            style={{ color: 'var(--text-tertiary)' }}
+            style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-label)' }}
           >
             字体
           </label>
@@ -90,13 +86,10 @@ export default function ReaderSettingsPanel({
                   className="relative overflow-hidden px-2 py-3.5 text-sm transition-all"
                   style={{
                     fontFamily: font.css,
-                    borderRadius: 'var(--radius-lg)',
                     color: isSelected ? theme.primaryColor : 'var(--text-secondary)',
-                    background: isSelected ? `${theme.primaryColor}08` : 'rgba(0,0,0,0.02)',
-                    border: `1.5px solid ${isSelected ? `${theme.primaryColor}40` : 'var(--border-subtle)'}`,
-                    boxShadow: isSelected
-                      ? `0 0 0 1px ${theme.primaryColor}15, var(--shadow-sm)`
-                      : 'none',
+                    background: isSelected
+                      ? `${theme.primaryColor}08`
+                      : 'var(--surface-container-high)',
                     fontWeight: isSelected ? 600 : 400,
                     transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                   }}
@@ -112,7 +105,7 @@ export default function ReaderSettingsPanel({
         <div className="mb-7">
           <label
             className="mb-3.5 block text-[11px] font-medium uppercase tracking-[0.12em]"
-            style={{ color: 'var(--text-tertiary)' }}
+            style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-label)' }}
           >
             字号
           </label>
@@ -133,9 +126,9 @@ export default function ReaderSettingsPanel({
                 onChange={(e) =>
                   onUpdateSettings({ fontSize: Number(e.target.value) })
                 }
-                className="h-1 w-full cursor-pointer appearance-none rounded-full"
+                className="h-1 w-full cursor-pointer appearance-none"
                 style={{
-                  background: `linear-gradient(to right, ${theme.primaryColor} 0%, ${theme.primaryColor} ${((settings.fontSize - 14) / 10) * 100}%, var(--border-subtle) ${((settings.fontSize - 14) / 10) * 100}%, var(--border-subtle) 100%)`,
+                  background: `linear-gradient(to right, ${theme.primaryColor} 0%, ${theme.primaryColor} ${((settings.fontSize - 14) / 10) * 100}%, var(--surface-container-high) ${((settings.fontSize - 14) / 10) * 100}%, var(--surface-container-high) 100%)`,
                   accentColor: theme.primaryColor,
                 }}
               />
@@ -152,8 +145,7 @@ export default function ReaderSettingsPanel({
                 color: theme.primaryColor,
                 background: `${theme.primaryColor}08`,
                 padding: '3px 8px',
-                borderRadius: 'var(--radius-md)',
-                border: `1px solid ${theme.primaryColor}15`,
+                fontFamily: 'var(--font-label)',
               }}
             >
               {settings.fontSize}
@@ -165,16 +157,13 @@ export default function ReaderSettingsPanel({
         <div
           className="overflow-hidden"
           style={{
-            borderRadius: 'var(--radius-xl)',
-            background: 'rgba(0,0,0,0.015)',
-            border: '1px solid var(--border-subtle)',
+            background: 'var(--surface-container-low)',
             padding: '20px 24px',
-            boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.02)',
           }}
         >
           <label
             className="mb-3 block text-[10px] font-medium uppercase tracking-[0.12em]"
-            style={{ color: 'var(--text-tertiary)' }}
+            style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-label)' }}
           >
             预览效果
           </label>
@@ -194,7 +183,6 @@ export default function ReaderSettingsPanel({
         </div>
       </div>
 
-      {/* Animations */}
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; }
@@ -220,12 +208,6 @@ export default function ReaderSettingsPanel({
               transform: scale(1) translateY(0);
               opacity: 1;
             }
-          }
-        }
-        @media (min-width: 640px) {
-          .glass {
-            border-radius: var(--radius-2xl) !important;
-            border-bottom: 1px solid var(--border-subtle) !important;
           }
         }
       `}</style>

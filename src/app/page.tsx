@@ -12,44 +12,77 @@ export default function Home() {
   const summaryByBookId = new Map(mockSummaries.map(s => [s.bookId, s]));
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--background)]">
-      {/* Hero section - 参考 Apple Books 简洁大气风格 */}
+    <div className="flex min-h-screen flex-col" style={{ background: 'var(--background)' }}>
+      {/* Hero - The Digital Scholar's Sanctuary */}
       <header className="relative overflow-hidden">
-        {/* 背景装饰 */}
+        {/* Ink wash background - subtle warm tones */}
+        <div className="absolute inset-0 ink-wash" />
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-gradient-to-br from-indigo-100/60 to-purple-100/40 blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-gradient-to-tr from-amber-100/40 to-rose-100/30 blur-3xl" />
+          <div className="absolute -top-40 -right-40 h-96 w-96 bg-[var(--primary)]/5 blur-[120px]" />
+          <div className="absolute -bottom-20 -left-20 h-72 w-72 bg-[var(--secondary)]/5 blur-[100px]" />
         </div>
 
-        <div className="relative flex flex-col items-center px-6 pt-16 pb-4 md:pt-24 md:pb-8">
-          {/* Logo */}
-          <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-200/50 md:h-16 md:w-16">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="md:h-8 md:w-8">
-              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-            </svg>
-          </div>
+        <div className="relative flex flex-col px-6 pt-16 pb-4 md:pt-24 md:pb-8">
+          {/* Asymmetric layout - title left-aligned */}
+          <div className="mx-auto w-full max-w-6xl">
+            {/* Lab protocol tag */}
+            <div className="mb-6 flex items-center gap-3">
+              <span
+                className="font-label text-[10px] font-medium uppercase tracking-[0.3em]"
+                style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-label)' }}
+              >
+                Laboratory Protocol 01
+              </span>
+              <div className="h-px flex-1" style={{ background: 'var(--outline-variant)', opacity: 0.4 }} />
+            </div>
 
-          <h1 className="gradient-text text-center text-4xl font-extrabold tracking-tighter md:text-5xl lg:text-6xl">
-            Read Is Big
-          </h1>
-          <p className="mt-3 max-w-md text-center text-base text-[var(--text-secondary)] md:text-lg">
-            15 分钟读懂一本好书，AI 提炼精华，思维导图呈现
-          </p>
+            {/* Seal stamp logo */}
+            <div
+              className="mb-8 flex h-14 w-14 items-center justify-center md:h-16 md:w-16"
+              style={{ background: 'var(--primary)' }}
+            >
+              <span className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-serif)' }}>
+                读
+              </span>
+            </div>
+
+            {/* Title - dramatic serif */}
+            <h1
+              className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl"
+              style={{ fontFamily: 'var(--font-serif)', color: 'var(--text-primary)', lineHeight: 1.1 }}
+            >
+              Read Is Big
+            </h1>
+            <p
+              className="mt-4 max-w-lg text-base leading-relaxed md:text-lg"
+              style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-sans)' }}
+            >
+              15 分钟读懂一本好书，AI 提炼精华，思维导图呈现
+            </p>
+          </div>
         </div>
       </header>
 
-      {/* 搜索 + 引导 */}
+      {/* Search + onboarding */}
       <section className="relative z-10 px-6 pb-12">
         <HomeClient />
       </section>
 
-      {/* 分类入口 - 参考微信读书胶囊标签 */}
+      {/* Category pills - no borders, tonal backgrounds */}
       <section className="pb-10">
         <div className="mx-auto max-w-6xl px-6">
           <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-[var(--text-primary)]">分类浏览</h2>
-            <Link href="/explore" className="text-sm font-medium text-indigo-500 transition-colors hover:text-indigo-600">
+            <h2
+              className="text-base font-semibold"
+              style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-sans)' }}
+            >
+              分类浏览
+            </h2>
+            <Link
+              href="/explore"
+              className="text-sm font-medium transition-colors"
+              style={{ color: 'var(--primary)', fontFamily: 'var(--font-label)' }}
+            >
               全部分类 &rarr;
             </Link>
           </div>
@@ -60,15 +93,22 @@ export default function Home() {
               <Link
                 key={cat.name}
                 href={`/explore/${encodeURIComponent(cat.name)}`}
-                className="flex shrink-0 items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                className="flex shrink-0 items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-300 hover:-translate-y-0.5"
                 style={{
-                  boxShadow: 'var(--shadow-sm)',
-                  border: '1px solid var(--border-subtle)',
+                  background: 'var(--surface-container-low)',
+                  color: 'var(--text-secondary)',
                 }}
               >
                 <span className="text-base">{cat.icon}</span>
                 <span>{cat.name}</span>
-                <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400">
+                <span
+                  className="px-1.5 py-0.5 text-[10px] font-semibold"
+                  style={{
+                    background: 'var(--surface-container-high)',
+                    color: 'var(--text-tertiary)',
+                    fontFamily: 'var(--font-label)',
+                  }}
+                >
                   {cat.bookCount}
                 </span>
               </Link>
@@ -77,14 +117,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 神作推荐 - 参考豆瓣评分高亮风格 */}
+      {/* Masterpiece recommendations - Vermilion accent */}
       <section className="mx-auto w-full max-w-6xl px-6 pb-12">
         <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-400 to-red-500 shadow-sm shadow-orange-200/60">
+          {/* Seal stamp icon */}
+          <div
+            className="flex h-8 w-8 items-center justify-center"
+            style={{ background: 'var(--primary)' }}
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           </div>
-          <h2 className="text-xl font-bold text-[var(--text-primary)]">神作推荐</h2>
-          <span className="rounded-full bg-gradient-to-r from-orange-50 to-red-50 px-3 py-1 text-xs font-semibold text-orange-600 ring-1 ring-orange-100">
+          <h2
+            className="text-xl font-bold"
+            style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}
+          >
+            神作推荐
+          </h2>
+          <span
+            className="px-3 py-1 text-xs font-semibold"
+            style={{
+              background: 'var(--primary)',
+              color: 'var(--on-primary)',
+              fontFamily: 'var(--font-label)',
+            }}
+          >
             {masterpieces.length} 本
           </span>
         </div>
@@ -99,14 +155,29 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 佳作推荐 */}
+      {/* Excellent books - Jade accent */}
       <section className="mx-auto w-full max-w-6xl px-6 pb-14">
         <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 shadow-sm shadow-emerald-200/60">
+          <div
+            className="flex h-8 w-8 items-center justify-center"
+            style={{ background: 'var(--secondary)' }}
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           </div>
-          <h2 className="text-xl font-bold text-[var(--text-primary)]">佳作推荐</h2>
-          <span className="rounded-full bg-gradient-to-r from-emerald-50 to-teal-50 px-3 py-1 text-xs font-semibold text-emerald-600 ring-1 ring-emerald-100">
+          <h2
+            className="text-xl font-bold"
+            style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}
+          >
+            佳作推荐
+          </h2>
+          <span
+            className="px-3 py-1 text-xs font-semibold"
+            style={{
+              background: 'var(--secondary)',
+              color: 'var(--on-secondary)',
+              fontFamily: 'var(--font-label)',
+            }}
+          >
             {excellentBooks.length} 本
           </span>
         </div>
@@ -121,23 +192,36 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 探索更多 */}
+      {/* Explore CTA - Vermilion to tertiary gradient */}
       <section className="mx-auto w-full max-w-6xl px-6 pb-16">
         <Link
           href="/explore"
-          className="group relative flex items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-8 py-5 transition-all duration-500 hover:scale-[1.01] hover:shadow-xl hover:shadow-indigo-200/40"
+          className="group relative flex items-center justify-center gap-3 overflow-hidden px-8 py-5 transition-all duration-500 hover:scale-[1.01]"
+          style={{
+            background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 50%, var(--tertiary) 100%)',
+          }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-          <span className="relative text-lg font-bold text-white">
+          <span
+            className="relative text-lg font-bold text-white"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
             探索更多好书
           </span>
           <span className="relative text-xl text-white/80 transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
         </Link>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-[var(--border-subtle)] bg-white/50 py-8 text-center">
-        <p className="text-sm text-[var(--text-tertiary)]">&copy; {new Date().getFullYear()} Read Is Big. 让阅读更高效。</p>
+      {/* Footer - tonal separation, no border */}
+      <footer
+        className="py-8 text-center"
+        style={{ background: 'var(--surface-container-low)' }}
+      >
+        <p
+          className="text-sm"
+          style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-label)' }}
+        >
+          &copy; {new Date().getFullYear()} Read Is Big. 让阅读更高效。
+        </p>
       </footer>
     </div>
   );
