@@ -50,7 +50,7 @@ export default function SummaryPage({ page, book, totalPages, theme, fontFamily,
     : '';
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex h-full w-full">
       {/* Left sidebar - calligraphy scroll */}
       <BookSidebar
         book={book}

@@ -99,7 +99,7 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
   if (!page) return null;
 
   return (
-    <div className="flex min-h-screen flex-col" style={{ background: 'var(--background)' }} {...swipeHandlers}>
+    <div className="flex h-screen flex-col overflow-hidden" style={{ background: 'var(--background)' }} {...swipeHandlers}>
       {/* Floating glass toolbar - Scholar's Studio */}
       <div className="absolute top-0 left-0 right-0 z-30 px-4 pt-4 sm:px-6 sm:pt-5">
         <div
