@@ -27,16 +27,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category: rawCategory } = await params;
   const categoryName = decodeURIComponent(rawCategory);
   const categoryInfo = CATEGORIES.find((c) => c.name === categoryName);
-  const allBooks = getBooksByCategory(categoryName);
-
-  const sortedBooks = [...allBooks].sort((a, b) => b.score - a.score);
-
-  const ratingGroups: { label: BookRating | '全部'; books: typeof sortedBooks }[] = [
-    { label: '全部', books: sortedBooks },
-    { label: '神作', books: sortedBooks.filter((b) => b.rating === '神作') },
-    { label: '佳作', books: sortedBooks.filter((b) => b.rating === '佳作') },
-    { label: '良作', books: sortedBooks.filter((b) => b.rating === '良作') },
-  ];
 
   if (!categoryInfo) {
     return (
@@ -63,6 +53,16 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     );
   }
 
+  const allBooks = getBooksByCategory(categoryName);
+  const sortedBooks = [...allBooks].sort((a, b) => b.score - a.score);
+
+  const ratingGroups: { label: BookRating | '全部'; books: typeof sortedBooks }[] = [
+    { label: '全部', books: sortedBooks },
+    { label: '神作', books: sortedBooks.filter((b) => b.rating === '神作') },
+    { label: '佳作', books: sortedBooks.filter((b) => b.rating === '佳作') },
+    { label: '良作', books: sortedBooks.filter((b) => b.rating === '良作') },
+  ];
+
   return (
     <div className="min-h-screen" style={{ background: 'var(--background)' }}>
       {/* Header */}
@@ -88,12 +88,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <section className="relative overflow-hidden px-6 pt-16 pb-14">
         <div className="absolute inset-0 ink-wash" />
         <div
-          className="absolute -right-24 -top-24 h-72 w-72 opacity-12 blur-[100px]"
-          style={{ backgroundColor: categoryInfo.color }}
+          className="absolute -right-24 -top-24 h-72 w-72 blur-[100px]"
+          style={{ backgroundColor: categoryInfo.color, opacity: 0.12 }}
         />
         <div
-          className="absolute -left-16 bottom-0 h-48 w-48 opacity-8 blur-[80px]"
-          style={{ backgroundColor: categoryInfo.color }}
+          className="absolute -left-16 bottom-0 h-48 w-48 blur-[80px]"
+          style={{ backgroundColor: categoryInfo.color, opacity: 0.08 }}
         />
 
         <div className="relative mx-auto max-w-4xl">

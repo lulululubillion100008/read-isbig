@@ -124,23 +124,23 @@ export function getBookRating(score: number): BookRating {
   return '普通';
 }
 
-// 评级颜色
+// 评级颜色 - Stitch design system palette
 export function getRatingColor(rating: BookRating): string {
   switch (rating) {
-    case '神作': return '#FF6B35';
-    case '佳作': return '#FFD700';
-    case '良作': return '#4CAF50';
-    default: return '#9E9E9E';
+    case '神作': return '#ad3332';
+    case '佳作': return '#9c2627';
+    case '良作': return '#416757';
+    default: return '#757c7a';
   }
 }
 
-// 评级背景渐变
+// 评级背景渐变 - Stitch design system palette
 export function getRatingGradient(rating: BookRating): string {
   switch (rating) {
-    case '神作': return 'from-orange-500 to-red-500';
-    case '佳作': return 'from-yellow-400 to-orange-400';
-    case '良作': return 'from-green-400 to-emerald-500';
-    default: return 'from-gray-400 to-gray-500';
+    case '神作': return 'from-[#ad3332] to-[#9c2627]';
+    case '佳作': return 'from-[#9c2627] to-[#5b605c]';
+    case '良作': return 'from-[#416757] to-[#355a4b]';
+    default: return 'from-[#757c7a] to-[#59615f]';
   }
 }
 

@@ -21,17 +21,16 @@ export async function generateMetadata({ params }: AuthorPageProps): Promise<Met
   };
 }
 
-// 根据书名生成渐变色
 function getBookGradient(title: string): string {
   const colors = [
-    ['#667eea', '#764ba2'],
-    ['#f093fb', '#f5576c'],
-    ['#4facfe', '#00f2fe'],
-    ['#43e97b', '#38f9d7'],
-    ['#fa709a', '#fee140'],
-    ['#a18cd1', '#fbc2eb'],
-    ['#fccb90', '#d57eeb'],
-    ['#e0c3fc', '#8ec5fc'],
+    ['#ad3332', '#9c2627'],
+    ['#416757', '#355a4b'],
+    ['#5b605c', '#4f5450'],
+    ['#59615f', '#757c7a'],
+    ['#ad3332', '#5b605c'],
+    ['#416757', '#9c2627'],
+    ['#67040d', '#ad3332'],
+    ['#5b605c', '#416757'],
   ];
   const index = title.charCodeAt(0) % colors.length;
   return `linear-gradient(135deg, ${colors[index][0]}, ${colors[index][1]})`;
@@ -40,7 +39,6 @@ function getBookGradient(title: string): string {
 export default async function AuthorPage({ params }: AuthorPageProps) {
   const { id } = await params;
   const author = getAuthorById(id);
-  const books = getBooksByAuthor(id).sort((a, b) => b.score - a.score);
 
   if (!author) {
     return (
@@ -49,13 +47,16 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
         style={{ background: 'var(--background)' }}
       >
         <div className="text-center">
-          <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+          <h1
+            className="text-2xl font-bold"
+            style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}
+          >
             未找到该作者
           </h1>
           <Link
             href="/explore"
             className="mt-4 inline-block font-medium"
-            style={{ color: 'var(--accent)' }}
+            style={{ color: 'var(--primary)' }}
           >
             返回探索页
           </Link>
@@ -64,7 +65,8 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
     );
   }
 
-  // 生卒年显示
+  const books = getBooksByAuthor(id).sort((a, b) => b.score - a.score);
+
   const lifespan = author.birthYear
     ? author.deathYear
       ? `${author.birthYear} - ${author.deathYear}`
@@ -75,62 +77,66 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
     <div className="min-h-screen">
       {/* Header */}
       <header className="glass-dark sticky top-0 z-20">
-        <div className="mx-auto flex max-w-4xl items-center px-6 py-4">
+        <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
           <Link
             href="/explore"
-            className="text-sm font-medium text-gray-300"
-            style={{ transition: 'color 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}
+            className="text-sm font-medium transition-colors"
+            style={{ color: 'rgba(255,255,255,0.6)' }}
           >
             &larr; 返回探索
           </Link>
+          <span
+            className="text-[10px] font-medium uppercase tracking-[0.3em]"
+            style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-label)' }}
+          >
+            Author Profile
+          </span>
         </div>
       </header>
 
-      {/* Author Hero -- immersive dark gradient */}
+      {/* Author Hero - ink wash dark gradient */}
       <section
         className="relative overflow-hidden px-6 pt-20 pb-24"
         style={{
-          background: 'linear-gradient(165deg, #0c1222 0%, #141e38 35%, #1a1a2e 65%, var(--background) 100%)',
+          background: 'linear-gradient(165deg, #2d3432 0%, #1a2220 35%, #181e1c 65%, var(--background) 100%)',
         }}
       >
-        {/* Decorative orbs */}
-        <div className="absolute left-1/2 top-8 h-80 w-80 -translate-x-1/2 rounded-full bg-[#6366f1]/12 blur-[120px]" />
-        <div className="absolute right-1/4 top-28 h-56 w-56 rounded-full bg-[#a855f7]/10 blur-[100px]" />
-        <div className="absolute left-1/4 bottom-8 h-48 w-48 rounded-full bg-[#ec4899]/8 blur-[80px]" />
-        <div className="absolute right-1/3 bottom-16 h-32 w-32 rounded-full bg-[#06b6d4]/6 blur-[60px]" />
+        {/* Decorative orbs - design system palette */}
+        <div className="absolute left-1/2 top-8 h-80 w-80 -translate-x-1/2 blur-[120px]" style={{ background: 'rgba(173, 51, 50, 0.12)' }} />
+        <div className="absolute right-1/4 top-28 h-56 w-56 blur-[100px]" style={{ background: 'rgba(91, 96, 92, 0.10)' }} />
+        <div className="absolute left-1/4 bottom-8 h-48 w-48 blur-[80px]" style={{ background: 'rgba(65, 103, 87, 0.08)' }} />
 
         <div className="relative mx-auto max-w-4xl">
           <div className="float-up flex flex-col items-center text-center">
-            {/* Avatar */}
+            {/* Avatar - Seal stamp style */}
             <div className="relative">
-              <div className="absolute inset-0 scale-150 rounded-full bg-gradient-to-r from-[#6366f1] to-[#a855f7] blur-2xl opacity-25" />
+              <div className="absolute inset-0 scale-150 blur-2xl" style={{ background: 'rgba(173, 51, 50, 0.25)' }} />
               <div
-                className="relative flex h-32 w-32 items-center justify-center rounded-full text-5xl font-bold text-white"
+                className="relative flex h-32 w-32 items-center justify-center text-5xl font-bold text-white"
                 style={{
-                  background: 'linear-gradient(135deg, var(--accent), #a855f7, #ec4899)',
-                  boxShadow: '0 12px 40px rgba(99, 102, 241, 0.35), inset 0 1px 0 rgba(255,255,255,0.2)',
-                  border: '3px solid rgba(255,255,255,0.12)',
+                  background: 'linear-gradient(135deg, #ad3332, #9c2627)',
+                  fontFamily: 'var(--font-serif)',
                 }}
               >
                 {author.name.charAt(0)}
               </div>
             </div>
 
-            <h1 className="float-up float-up-delay-1 mt-8 text-4xl font-extrabold text-white tracking-tight md:text-5xl">
+            <h1
+              className="float-up float-up-delay-1 mt-8 text-4xl font-extrabold text-white tracking-tight md:text-5xl"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
               {author.name}
             </h1>
 
             {/* Nationality & lifespan */}
-            <div className="float-up float-up-delay-2 mt-4 flex items-center gap-3 text-sm text-gray-400">
+            <div className="float-up float-up-delay-2 mt-4 flex items-center gap-3 text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
               {author.nationality && (
                 <span className="font-medium">{author.nationality}</span>
               )}
               {lifespan && (
                 <>
-                  <span
-                    className="h-1 w-1 rounded-full"
-                    style={{ background: 'rgba(255,255,255,0.2)' }}
-                  />
+                  <span className="h-1 w-1" style={{ background: 'rgba(255,255,255,0.2)' }} />
                   <span>{lifespan}</span>
                 </>
               )}
@@ -142,12 +148,11 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                 {author.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-4 py-1.5 text-sm font-medium text-gray-200"
+                    className="px-4 py-1.5 text-sm font-medium"
                     style={{
-                      borderRadius: 'var(--radius-md)',
+                      color: 'rgba(255,255,255,0.7)',
                       background: 'rgba(255,255,255,0.08)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      backdropFilter: 'blur(12px)',
+                      backdropFilter: 'blur(24px)',
                     }}
                   >
                     {tag}
@@ -166,11 +171,11 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
           <section className="py-14">
             <h2
               className="flex items-center gap-3 text-xl font-bold"
-              style={{ color: 'var(--text-primary)' }}
+              style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}
             >
               <span
-                className="h-6 w-1 rounded-full"
-                style={{ background: 'linear-gradient(to bottom, var(--accent), #a855f7)' }}
+                className="h-6 w-1"
+                style={{ background: 'linear-gradient(to bottom, #ad3332, #9c2627)' }}
               />
               关于作者
             </h2>
@@ -187,11 +192,11 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
             <section className="pb-14">
               <h2
                 className="flex items-center gap-3 text-xl font-bold"
-                style={{ color: 'var(--text-primary)' }}
+                style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}
               >
                 <span
-                  className="h-6 w-1 rounded-full"
-                  style={{ background: 'linear-gradient(to bottom, var(--warm), #ef4444)' }}
+                  className="h-6 w-1"
+                  style={{ background: 'linear-gradient(to bottom, #416757, #355a4b)' }}
                 />
                 主要成就
               </h2>
@@ -202,18 +207,15 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                     className="flex items-start gap-4"
                     style={{
                       padding: '1.25rem 1.5rem',
-                      borderRadius: 'var(--radius-lg)',
-                      background: 'var(--surface)',
-                      boxShadow: 'var(--shadow-card)',
-                      border: '1px solid var(--border-subtle)',
+                      background: 'var(--surface-container-lowest)',
                       transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                     }}
                   >
                     <span
-                      className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                      className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center text-xs font-bold text-white"
                       style={{
-                        background: 'linear-gradient(135deg, var(--warm), #ef4444)',
-                        boxShadow: '0 4px 12px rgba(245, 158, 11, 0.25)',
+                        background: 'linear-gradient(135deg, #416757, #355a4b)',
+                        fontFamily: 'var(--font-label)',
                       }}
                     >
                       {i + 1}
@@ -235,20 +237,19 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
             <section className="pb-28">
               <h2
                 className="flex items-center gap-3 text-xl font-bold"
-                style={{ color: 'var(--text-primary)' }}
+                style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}
               >
                 <span
-                  className="h-6 w-1 rounded-full"
-                  style={{ background: 'linear-gradient(to bottom, var(--success), #059669)' }}
+                  className="h-6 w-1"
+                  style={{ background: 'linear-gradient(to bottom, #5b605c, #4f5450)' }}
                 />
                 该作者的书籍
                 <span
                   className="px-3 py-1 text-xs font-semibold"
                   style={{
-                    borderRadius: 'var(--radius-sm)',
-                    background: 'rgba(16, 185, 129, 0.08)',
-                    color: 'var(--success)',
-                    border: '1px solid rgba(16, 185, 129, 0.12)',
+                    background: 'rgba(91, 96, 92, 0.08)',
+                    color: '#5b605c',
+                    fontFamily: 'var(--font-label)',
                   }}
                 >
                   {books.length} 本
@@ -261,10 +262,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                     <div
                       className="overflow-hidden"
                       style={{
-                        borderRadius: 'var(--radius-xl)',
-                        background: 'var(--surface)',
-                        boxShadow: 'var(--shadow-card)',
-                        border: '1px solid var(--border-subtle)',
+                        background: 'var(--surface-container-lowest)',
                         transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                       }}
                     >
@@ -273,12 +271,12 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                         className="relative flex h-48 items-center justify-center p-5"
                         style={{ background: getBookGradient(book.title) }}
                       >
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-white/12" />
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-transparent" />
-                        <h3 className="relative z-10 text-center text-base font-bold leading-tight text-white drop-shadow-lg">
+                        <h3
+                          className="relative z-10 text-center text-base font-bold leading-tight text-white drop-shadow-lg"
+                          style={{ fontFamily: 'var(--font-serif)' }}
+                        >
                           {book.title}
                         </h3>
-                        {/* Rating badge */}
                         <div className="absolute right-3 top-3">
                           <RatingBadge score={book.score} rating={book.rating} size="sm" />
                         </div>
@@ -292,10 +290,9 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                               key={cat}
                               className="px-2.5 py-0.5 text-xs font-medium"
                               style={{
-                                borderRadius: 'var(--radius-sm)',
-                                background: 'rgba(99, 102, 241, 0.06)',
+                                background: 'var(--surface-container-high)',
                                 color: 'var(--text-tertiary)',
-                                border: '1px solid var(--border-subtle)',
+                                fontFamily: 'var(--font-label)',
                               }}
                             >
                               {cat}
@@ -305,7 +302,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                         {book.totalReaders && (
                           <p
                             className="mt-2.5 text-xs font-medium"
-                            style={{ color: 'var(--text-tertiary)' }}
+                            style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-label)' }}
                           >
                             {(book.totalReaders / 10000).toFixed(1)}万人读过
                           </p>
@@ -320,13 +317,13 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
         </div>
       </div>
 
-      {/* Footer */}
+      {/* Footer - tonal bg separation */}
       <footer
         className="py-12 text-center text-sm"
         style={{
-          background: 'var(--surface)',
-          borderTop: '1px solid var(--border-subtle)',
+          background: 'var(--surface-container-low)',
           color: 'var(--text-tertiary)',
+          fontFamily: 'var(--font-label)',
         }}
       >
         <p>&copy; {new Date().getFullYear()} Read Is Big. 让阅读更高效。</p>

@@ -4,7 +4,8 @@ import { searchMockBooks } from '@/lib/mock-data'
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
-  const query = request.nextUrl.searchParams.get('q') || ''
+  const rawQuery = request.nextUrl.searchParams.get('q') || ''
+  const query = rawQuery.slice(0, 200)
   const results = searchMockBooks(query)
 
   return Response.json({

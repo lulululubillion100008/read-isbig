@@ -1,11 +1,21 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { hashPassword, createToken } from '@/lib/auth'
+import { rateLimit } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get('x-forwarded-for') ?? 'anonymous'
+    const { success: allowed } = rateLimit(`register:${ip}`, 3, 60_000)
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, error: '请求过于频繁，请稍后重试' },
+        { status: 429 }
+      )
+    }
+
     const body = await request.json()
     const email = typeof body.email === 'string' ? body.email.trim().slice(0, 255) : ''
     const name = typeof body.name === 'string' ? body.name.trim().slice(0, 100) : ''
@@ -55,13 +65,22 @@ export async function POST(request: Request) {
 
     const token = createToken(user.id)
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       data: {
-        token,
         user: { id: user.id, email: user.email, name: user.name },
       },
     })
+
+    response.cookies.set('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24 * 7,
+      path: '/',
+    })
+
+    return response
   } catch (error) {
     console.error('Register error:', error instanceof Error ? error.message : 'unknown')
     return NextResponse.json(

@@ -2,15 +2,15 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 function getJwtSecret(): string {
-  if (process.env.JWT_SECRET) return process.env.JWT_SECRET
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('JWT_SECRET environment variable must be set in production')
+  const secret = process.env.JWT_SECRET
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable must be set')
   }
-  return 'dev-secret'
+  return secret
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 10)
+  return bcrypt.hash(password, 12)
 }
 
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
@@ -30,9 +30,20 @@ export function verifyToken(token: string): { userId: string } | null {
 }
 
 export function getUserIdFromRequest(request: Request): string | null {
+  // Try HttpOnly cookie first
+  const cookieHeader = request.headers.get('Cookie') ?? ''
+  const cookieMatch = cookieHeader.match(/(?:^|;\s*)auth_token=([^;]+)/)
+  if (cookieMatch) {
+    const payload = verifyToken(cookieMatch[1])
+    if (payload) return payload.userId
+  }
+
+  // Fallback to Authorization header for API clients
   const auth = request.headers.get('Authorization')
-  if (!auth?.startsWith('Bearer ')) return null
-  const token = auth.slice(7)
-  const payload = verifyToken(token)
-  return payload?.userId || null
+  if (auth?.startsWith('Bearer ')) {
+    const payload = verifyToken(auth.slice(7))
+    return payload?.userId || null
+  }
+
+  return null
 }

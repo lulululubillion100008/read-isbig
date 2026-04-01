@@ -111,6 +111,7 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
             className="group flex h-9 w-9 items-center justify-center transition-all"
             style={{ color: 'var(--text-secondary)' }}
             title="返回首页"
+            aria-label="返回首页"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -153,9 +154,10 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
               className="flex h-9 w-9 items-center justify-center transition-all"
               style={{
                 color: showPlayer ? 'var(--primary)' : 'var(--text-secondary)',
-                background: showPlayer ? 'rgba(154, 19, 29, 0.08)' : 'transparent',
+                background: showPlayer ? 'rgba(173, 51, 50, 0.08)' : 'transparent',
               }}
               title={showPlayer ? '关闭播客模式' : '播客模式'}
+              aria-label={showPlayer ? '关闭播客模式' : '播客模式'}
             >
               {showPlayer ? (
                 <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
@@ -182,6 +184,7 @@ export default function SummaryReader({ summary }: SummaryReaderProps) {
               className="flex h-9 w-9 items-center justify-center transition-all"
               style={{ color: 'var(--text-secondary)' }}
               title="阅读设置"
+              aria-label="阅读设置"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />

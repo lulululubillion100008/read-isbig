@@ -53,13 +53,21 @@ export default function PageNavigation({
                 key={page}
                 onClick={() => onPageChange(page)}
                 aria-label={`第${page}页`}
-                className="transition-all duration-300"
+                className="relative flex items-center justify-center transition-all duration-300"
                 style={{
-                  width: isActive ? 24 : 8,
-                  height: 8,
-                  backgroundColor: isActive ? theme.primaryColor : `${theme.primaryColor}20`,
+                  width: 44,
+                  height: 44,
                 }}
-              />
+              >
+                <span
+                  style={{
+                    width: isActive ? 24 : 8,
+                    height: 8,
+                    backgroundColor: isActive ? theme.primaryColor : `${theme.primaryColor}20`,
+                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                />
+              </button>
             );
           })}
         </div>

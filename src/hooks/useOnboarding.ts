@@ -48,7 +48,7 @@ export function useOnboarding() {
   }, []);
 
   const nextStep = useCallback(() => {
-    setStep((s) => s + 1);
+    setStep((s) => Math.min(s + 1, 2));
   }, []);
 
   const prevStep = useCallback(() => {

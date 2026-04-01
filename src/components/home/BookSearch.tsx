@@ -94,8 +94,9 @@ export default function BookSearch() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => { setFocused(true); suggestions.length > 0 && setShowSuggestions(true); }}
+          onFocus={() => { setFocused(true); if (suggestions.length > 0) setShowSuggestions(true); }}
           placeholder="搜索书名、作者..."
+          aria-label="搜索书名、作者"
           className="flex-1 bg-transparent text-base outline-none placeholder:text-[var(--text-tertiary)]"
           style={{ color: 'var(--text-primary)' }}
         />
@@ -131,10 +132,7 @@ export default function BookSearch() {
                 setShowSuggestions(false);
                 router.push(`/book/${s.bookId}`);
               }}
-              className="flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors duration-150"
-              style={{ background: 'transparent' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--surface-container-low)'; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+              className="suggestion-item flex w-full items-center gap-3 px-5 py-3.5 text-left"
             >
               <div
                 className="flex h-8 w-8 shrink-0 items-center justify-center"

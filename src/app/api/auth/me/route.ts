@@ -1,13 +1,23 @@
 import { NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 import { prisma } from '@/lib/db'
-import { getUserIdFromRequest } from '@/lib/auth'
+import { verifyToken } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const userId = getUserIdFromRequest(request)
-    if (!userId) {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('auth_token')?.value
+    if (!token) {
+      return NextResponse.json(
+        { success: false, error: '未登录' },
+        { status: 401 }
+      )
+    }
+
+    const payload = verifyToken(token)
+    if (!payload) {
       return NextResponse.json(
         { success: false, error: '未登录' },
         { status: 401 }
@@ -15,7 +25,7 @@ export async function GET(request: Request) {
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: payload.userId },
       select: { id: true, email: true, name: true, avatar: true },
     })
 
@@ -28,7 +38,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ success: true, data: { user } })
   } catch (error) {
-    console.error('Me error:', error)
+    console.error('Me error:', error instanceof Error ? error.message : 'unknown')
     return NextResponse.json(
       { success: false, error: '获取用户信息失败' },
       { status: 500 }

@@ -119,6 +119,12 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
     }
   }
 
+  const inputStyle = {
+    background: 'var(--surface-container-low)',
+    color: 'var(--text-primary)',
+    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
@@ -128,22 +134,37 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
       onClick={onClose}
     >
       {/* Glassmorphism backdrop */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-xl" />
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'rgba(12, 15, 14, 0.4)',
+          backdropFilter: 'blur(24px) saturate(1.8)',
+          WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
+        }}
+      />
 
       {/* Modal card */}
       <div
         ref={modalRef}
-        className="relative w-full max-w-md mx-4 bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-md mx-4 overflow-hidden"
+        style={{
+          background: 'rgba(250, 249, 245, 0.95)',
+          backdropFilter: 'blur(8px)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Top decorative gradient bar */}
-        <div className="h-1.5 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400" />
+        {/* Top decorative bar - Vermilion gradient */}
+        <div
+          className="h-1.5"
+          style={{ background: 'linear-gradient(to right, #ad3332, #9c2627, #5b605c)' }}
+        />
 
         {/* Close button */}
         <button
           onClick={onClose}
           aria-label="关闭"
-          className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+          className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center transition-colors"
+          style={{ color: 'var(--text-tertiary)' }}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -152,27 +173,36 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
 
         <div className="px-8 pt-8 pb-2">
           {/* Title */}
-          <h2 id={titleId} className="text-2xl font-bold text-gray-800 mb-1">
+          <h2
+            id={titleId}
+            className="text-2xl font-bold mb-1"
+            style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}
+          >
             {tab === 'login' ? '欢迎回来' : '加入我们'}
           </h2>
-          <p className="text-sm text-gray-400 mb-6">
+          <p className="text-sm mb-6" style={{ color: 'var(--text-tertiary)' }}>
             {tab === 'login' ? '登录继续你的阅读之旅' : '创建账号开启精华阅读'}
           </p>
 
           {/* Tab switcher */}
-          <div className="relative flex mb-6 bg-gray-100 rounded-2xl p-1" role="tablist">
+          <div
+            className="relative flex mb-6 p-1"
+            style={{ background: 'var(--surface-container-high)' }}
+            role="tablist"
+          >
             <div
-              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-xl shadow-sm transition-transform duration-300 ease-out ${
-                tab === 'register' ? 'translate-x-[calc(100%+8px)]' : 'translate-x-0'
-              }`}
+              className="absolute top-1 bottom-1 w-[calc(50%-4px)] transition-transform duration-300 ease-out"
+              style={{
+                background: 'var(--surface-container-lowest)',
+                transform: tab === 'register' ? 'translateX(calc(100% + 8px))' : 'translateX(0)',
+              }}
             />
             <button
               role="tab"
               aria-selected={tab === 'login'}
               aria-controls="login-panel"
-              className={`relative z-10 flex-1 py-2.5 text-sm font-medium rounded-xl transition-colors duration-200 ${
-                tab === 'login' ? 'text-gray-800' : 'text-gray-400'
-              }`}
+              className="relative z-10 flex-1 py-2.5 text-sm font-medium transition-colors duration-200"
+              style={{ color: tab === 'login' ? 'var(--text-primary)' : 'var(--text-tertiary)' }}
               onClick={() => switchTab('login')}
             >
               登录
@@ -181,9 +211,8 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
               role="tab"
               aria-selected={tab === 'register'}
               aria-controls="register-panel"
-              className={`relative z-10 flex-1 py-2.5 text-sm font-medium rounded-xl transition-colors duration-200 ${
-                tab === 'register' ? 'text-gray-800' : 'text-gray-400'
-              }`}
+              className="relative z-10 flex-1 py-2.5 text-sm font-medium transition-colors duration-200"
+              style={{ color: tab === 'register' ? 'var(--text-primary)' : 'var(--text-tertiary)' }}
               onClick={() => switchTab('register')}
             >
               注册
@@ -194,7 +223,14 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
         <div className="px-8 pb-8">
           {/* Error message */}
           {error && (
-            <div className="mb-4 px-4 py-3 bg-red-50 border border-red-100 text-red-500 text-sm rounded-xl" role="alert">
+            <div
+              className="mb-4 px-4 py-3 text-sm"
+              style={{
+                background: 'rgba(173, 51, 50, 0.06)',
+                color: '#ad3332',
+              }}
+              role="alert"
+            >
               {error}
             </div>
           )}
@@ -211,7 +247,8 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   required
-                  className="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400 transition-all"
+                  className="w-full px-5 py-3.5 text-base outline-none placeholder:text-[var(--text-tertiary)]"
+                  style={inputStyle}
                 />
               </div>
               <div>
@@ -223,13 +260,17 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   required
-                  className="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400 transition-all"
+                  className="w-full px-5 py-3.5 text-base outline-none placeholder:text-[var(--text-tertiary)]"
+                  style={inputStyle}
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium rounded-xl shadow-lg shadow-purple-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                className="w-full py-3.5 text-white font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                style={{
+                  background: 'linear-gradient(135deg, #ad3332, #9c2627)',
+                }}
               >
                 {loading ? (
                   <span className="inline-flex items-center gap-2">
@@ -256,7 +297,8 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
                   value={regName}
                   onChange={(e) => setRegName(e.target.value)}
                   required
-                  className="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400 transition-all"
+                  className="w-full px-5 py-3.5 text-base outline-none placeholder:text-[var(--text-tertiary)]"
+                  style={inputStyle}
                 />
               </div>
               <div>
@@ -268,7 +310,8 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
                   value={regEmail}
                   onChange={(e) => setRegEmail(e.target.value)}
                   required
-                  className="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400 transition-all"
+                  className="w-full px-5 py-3.5 text-base outline-none placeholder:text-[var(--text-tertiary)]"
+                  style={inputStyle}
                 />
               </div>
               <div>
@@ -280,7 +323,8 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
                   required
-                  className="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400 transition-all"
+                  className="w-full px-5 py-3.5 text-base outline-none placeholder:text-[var(--text-tertiary)]"
+                  style={inputStyle}
                 />
               </div>
               <div>
@@ -292,13 +336,17 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
                   value={regConfirm}
                   onChange={(e) => setRegConfirm(e.target.value)}
                   required
-                  className="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400 transition-all"
+                  className="w-full px-5 py-3.5 text-base outline-none placeholder:text-[var(--text-tertiary)]"
+                  style={inputStyle}
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium rounded-xl shadow-lg shadow-purple-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                className="w-full py-3.5 text-white font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                style={{
+                  background: 'linear-gradient(135deg, #ad3332, #9c2627)',
+                }}
               >
                 {loading ? (
                   <span className="inline-flex items-center gap-2">
@@ -314,11 +362,11 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
           )}
 
           {/* Bottom hint */}
-          <p className="mt-6 text-center text-xs text-gray-400">
+          <p className="mt-6 text-center text-xs" style={{ color: 'var(--text-tertiary)' }}>
             {tab === 'login' ? (
-              <>还没有账号？<button onClick={() => switchTab('register')} className="text-purple-500 hover:text-purple-600 font-medium">立即注册</button></>
+              <>还没有账号？<button onClick={() => switchTab('register')} className="font-medium" style={{ color: 'var(--primary)' }}>立即注册</button></>
             ) : (
-              <>已有账号？<button onClick={() => switchTab('login')} className="text-purple-500 hover:text-purple-600 font-medium">去登录</button></>
+              <>已有账号？<button onClick={() => switchTab('login')} className="font-medium" style={{ color: 'var(--primary)' }}>去登录</button></>
             )}
           </p>
         </div>

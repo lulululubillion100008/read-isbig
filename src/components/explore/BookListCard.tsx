@@ -8,16 +8,16 @@ interface BookListCardProps {
 
 function getBookGradient(title: string): string {
   const colors = [
-    ['#9a131d', '#BC2F32'],
-    ['#006a62', '#00a497'],
-    ['#004f87', '#0068ae'],
-    ['#59413f', '#8d706e'],
-    ['#9a131d', '#004f87'],
-    ['#006a62', '#BC2F32'],
-    ['#7a0e17', '#9a131d'],
-    ['#004f87', '#006a62'],
-    ['#BC2F32', '#59413f'],
-    ['#0068ae', '#006a62'],
+    ['#ad3332', '#9c2627'],
+    ['#416757', '#355a4b'],
+    ['#5b605c', '#4f5450'],
+    ['#59615f', '#757c7a'],
+    ['#ad3332', '#5b605c'],
+    ['#416757', '#9c2627'],
+    ['#67040d', '#ad3332'],
+    ['#5b605c', '#416757'],
+    ['#9c2627', '#59615f'],
+    ['#4f5450', '#416757'],
   ];
   const index = title.charCodeAt(0) % colors.length;
   return `linear-gradient(135deg, ${colors[index][0]}, ${colors[index][1]})`;
@@ -27,7 +27,7 @@ export default function BookListCard({ book }: BookListCardProps) {
   return (
     <Link href={`/book/${book.id}`} className="group block">
       <div
-        className="flex gap-5 transition-all duration-400"
+        className="flex gap-5 transition-all duration-300"
         style={{
           padding: '1.25rem',
           background: 'var(--surface-container-lowest)',
@@ -35,7 +35,7 @@ export default function BookListCard({ book }: BookListCardProps) {
       >
         {/* Cover - ink wash gradient */}
         <div
-          className="flex h-32 w-22 shrink-0 items-center justify-center overflow-hidden transition-transform duration-400 group-hover:scale-[1.02]"
+          className="flex h-32 shrink-0 items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-[1.02]"
           style={{
             width: '5.5rem',
             background: getBookGradient(book.title),

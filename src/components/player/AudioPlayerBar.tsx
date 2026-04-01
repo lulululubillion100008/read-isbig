@@ -39,8 +39,8 @@ export default function AudioPlayerBar({
     <div
       className="player-bar fixed bottom-0 left-0 right-0 z-50 text-white safe-area-bottom"
       style={{
-        background: 'rgba(27, 28, 26, 0.92)',
-        backdropFilter: 'blur(20px) saturate(180%)',
+        background: 'rgba(12, 15, 14, 0.92)',
+        backdropFilter: 'blur(24px) saturate(180%)',
       }}
     >
       {/* Progress bar */}
@@ -175,8 +175,8 @@ export default function AudioPlayerBar({
               <div
                 className="absolute bottom-full right-0 z-50 mb-3 overflow-hidden"
                 style={{
-                  background: 'rgba(27, 28, 26, 0.95)',
-                  backdropFilter: 'blur(20px) saturate(180%)',
+                  background: 'rgba(12, 15, 14, 0.95)',
+                  backdropFilter: 'blur(24px) saturate(180%)',
                 }}
               >
                 {speeds.map((speed) => (

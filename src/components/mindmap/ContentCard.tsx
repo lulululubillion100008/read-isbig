@@ -10,15 +10,18 @@ interface ContentCardProps {
 export default function ContentCard({ children, theme, accent = false }: ContentCardProps) {
   return (
     <div
-      className="p-5 md:p-6"
+      className="relative p-5 md:p-6"
       style={{
         background: 'var(--surface-container-lowest)',
-        ...(accent
-          ? { borderLeft: `3px solid ${theme.primaryColor}80` }
-          : {}),
         transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
+      {accent && (
+        <div
+          className="absolute left-0 top-0 bottom-0 w-[3px]"
+          style={{ background: `${theme.primaryColor}80` }}
+        />
+      )}
       {children}
     </div>
   );

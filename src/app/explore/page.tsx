@@ -5,12 +5,12 @@ import RatingBadge from '@/components/explore/RatingBadge';
 
 function MasterpieceCard({ book }: { book: typeof BOOK_DETAILS[number] }) {
   const colors = [
-    ['#9a131d', '#BC2F32'],
-    ['#006a62', '#00a497'],
-    ['#004f87', '#0068ae'],
-    ['#59413f', '#8d706e'],
-    ['#9a131d', '#004f87'],
-    ['#006a62', '#BC2F32'],
+    ['#ad3332', '#9c2627'],
+    ['#416757', '#355a4b'],
+    ['#5b605c', '#4f5450'],
+    ['#59615f', '#757c7a'],
+    ['#ad3332', '#5b605c'],
+    ['#416757', '#9c2627'],
   ];
   const index = book.title.charCodeAt(0) % colors.length;
   const gradient = `linear-gradient(135deg, ${colors[index][0]}, ${colors[index][1]})`;
@@ -18,7 +18,7 @@ function MasterpieceCard({ book }: { book: typeof BOOK_DETAILS[number] }) {
   return (
     <Link href={`/book/${book.id}`} className="group block">
       <div
-        className="relative w-44 shrink-0 overflow-hidden transition-all duration-400"
+        className="relative w-44 shrink-0 overflow-hidden transition-all duration-300"
         style={{
           background: 'var(--surface-container-lowest)',
         }}

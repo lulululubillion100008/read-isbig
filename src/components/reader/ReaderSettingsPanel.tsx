@@ -26,19 +26,28 @@ export default function ReaderSettingsPanel({
         onClose();
       }
     }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    }
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" role="dialog" aria-modal="true" aria-label="阅读设置">
       {/* Backdrop */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'rgba(27, 28, 26, 0.25)',
-          backdropFilter: 'blur(16px) saturate(1.8)',
-          WebkitBackdropFilter: 'blur(16px) saturate(1.8)',
+          background: 'rgba(45, 52, 50, 0.25)',
+          backdropFilter: 'blur(24px) saturate(1.8)',
+          WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
           animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       />
@@ -183,34 +192,6 @@ export default function ReaderSettingsPanel({
         </div>
       </div>
 
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes settingsPanelIn {
-          from {
-            transform: translateY(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-        @media (min-width: 640px) {
-          @keyframes settingsPanelIn {
-            from {
-              transform: scale(0.9) translateY(16px);
-              opacity: 0;
-            }
-            to {
-              transform: scale(1) translateY(0);
-              opacity: 1;
-            }
-          }
-        }
-      `}</style>
     </div>
   );
 }

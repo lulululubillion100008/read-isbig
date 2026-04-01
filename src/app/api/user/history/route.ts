@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ success: true, data: history })
   } catch (error) {
-    console.error('History GET error:', error)
+    console.error('History GET error:', error instanceof Error ? error.message : 'unknown')
     return NextResponse.json(
       { success: false, error: '获取阅读历史失败' },
       { status: 500 }
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, data: record })
   } catch (error) {
-    console.error('History POST error:', error)
+    console.error('History POST error:', error instanceof Error ? error.message : 'unknown')
     return NextResponse.json(
       { success: false, error: '更新阅读进度失败' },
       { status: 500 }

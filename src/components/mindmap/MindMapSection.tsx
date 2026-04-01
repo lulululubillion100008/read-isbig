@@ -102,13 +102,16 @@ export default function MindMapSection({ section, theme, depth = 0 }: MindMapSec
     case 'quote':
       return (
         <blockquote
-          className="my-4 border-l-[3px] py-2.5 pl-5 italic"
+          className="relative my-4 py-2.5 pl-5 italic"
           style={{
-            borderLeftColor: `${theme.primaryColor}60`,
             color: 'var(--text-secondary)',
             lineHeight: 1.85,
           }}
         >
+          <div
+            className="absolute left-0 top-0 bottom-0 w-[3px]"
+            style={{ background: `${theme.primaryColor}60` }}
+          />
           {section.content}
         </blockquote>
       );

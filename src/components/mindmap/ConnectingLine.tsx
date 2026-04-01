@@ -19,33 +19,10 @@ export default function ConnectingLine({ children, theme, hasConnector = true }:
         borderLeftWidth: '1.5px',
         borderLeftStyle: 'solid',
         borderLeftColor: `${theme.connectorColor}80`,
-      }}
+        '--connector-color': `${theme.connectorColor}80`,
+      } as React.CSSProperties}
     >
       {children}
-
-      <style>{`
-        .connector-tree > * {
-          position: relative;
-        }
-        .connector-tree > *::before {
-          content: '';
-          position: absolute;
-          left: -24px;
-          top: 14px;
-          width: 18px;
-          height: 0;
-          border-top: 1.5px solid ${theme.connectorColor}80;
-        }
-        .connector-tree > *:last-child::after {
-          content: '';
-          position: absolute;
-          left: -25.5px;
-          top: 14px;
-          bottom: -1px;
-          width: 2px;
-          background: var(--surface-container-lowest, #fff);
-        }
-      `}</style>
     </div>
   );
 }

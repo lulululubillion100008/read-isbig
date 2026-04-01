@@ -8,7 +8,7 @@ interface TopBannerProps {
 export default function TopBanner({ title, theme }: TopBannerProps) {
   return (
     <div
-      className="relative w-full overflow-hidden px-6 pt-18 pb-5 sm:px-10 sm:pt-20"
+      className="relative w-full overflow-hidden px-6 pt-16 pb-5 sm:px-10 sm:pt-20"
       style={{ backgroundColor: theme.bannerBg }}
     >
       {/* Subtle ambient glow */}

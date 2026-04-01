@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ success: true, data: favorites })
   } catch (error) {
-    console.error('Favorites GET error:', error)
+    console.error('Favorites GET error:', error instanceof Error ? error.message : 'unknown')
     return NextResponse.json(
       { success: false, error: '获取收藏列表失败' },
       { status: 500 }
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, data: favorite })
   } catch (error) {
-    console.error('Favorites POST error:', error)
+    console.error('Favorites POST error:', error instanceof Error ? error.message : 'unknown')
     return NextResponse.json(
       { success: false, error: '添加收藏失败' },
       { status: 500 }
@@ -92,7 +92,7 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Favorites DELETE error:', error)
+    console.error('Favorites DELETE error:', error instanceof Error ? error.message : 'unknown')
     return NextResponse.json(
       { success: false, error: '取消收藏失败' },
       { status: 500 }

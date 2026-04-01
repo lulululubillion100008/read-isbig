@@ -57,10 +57,7 @@ export async function generateBookSummary(options: GenerateSummaryOptions) {
 - 内容要有深度，不是简单的列举`
 
   const sanitizedData = crawledData
-    ? crawledData
-        .slice(0, 3000)
-        .replace(/ignore\s+(all\s+)?previous\s+instructions/gi, '[filtered]')
-        .replace(/system\s*prompt/gi, '[filtered]')
+    ? crawledData.slice(0, 3000)
     : null
 
   const userMessage = sanitizedData
