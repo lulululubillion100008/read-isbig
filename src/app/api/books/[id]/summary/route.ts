@@ -1,5 +1,8 @@
 import type { NextRequest } from 'next/server'
-import { getMockSummaryByBookId } from '@/lib/mock-data'
+import { prisma } from '@/lib/db'
+import { generateBookSummary } from '@/lib/ai/summary'
+import { getUserIdFromRequest } from '@/lib/auth'
+import { rateLimit } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
@@ -8,11 +11,148 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params
-  const summary = getMockSummaryByBookId(id)
 
-  if (!summary) {
+  // 先查缓存
+  const existing = await prisma.bookSummary.findFirst({
+    where: { bookId: id },
+    include: { book: true },
+    orderBy: { generatedAt: 'desc' },
+  })
+
+  if (existing) {
+    return Response.json({
+      success: true,
+      data: {
+        bookId: existing.bookId,
+        book: existing.book,
+        chapters: existing.chaptersJson ? JSON.parse(existing.chaptersJson) : [],
+        readingTime: existing.readingTime,
+        contentType: existing.contentType,
+        generatedAt: existing.generatedAt,
+      },
+    })
+  }
+
+  // 查找书籍元数据
+  const book = await prisma.book.findUnique({ where: { id } })
+  if (!book) {
     return Response.json({ success: false, error: '书籍未找到' }, { status: 404 })
   }
 
-  return Response.json({ success: true, data: summary })
+  return Response.json({
+    success: false,
+    error: '该书尚无内容，请使用 POST 生成',
+  }, { status: 404 })
+}
+
+export async function POST(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { id } = await context.params
+
+  const ip = request.headers.get('x-forwarded-for') ?? 'anonymous'
+  const userId = getUserIdFromRequest(request)
+  const rateLimitKey = userId ? `generate:${userId}` : `generate:${ip}`
+  const { success: allowed } = rateLimit(rateLimitKey, 3, 60_000)
+  if (!allowed) {
+    return Response.json(
+      { success: false, error: '请求过于频繁，请稍后重试' },
+      { status: 429 }
+    )
+  }
+
+  // 查找或创建书籍
+  let book = await prisma.book.findUnique({ where: { id } })
+
+  if (!book) {
+    // 尝试从请求体获取书籍信息
+    let body: { title?: string; author?: string } = {}
+    try {
+      body = await request.json()
+    } catch {
+      // empty body
+    }
+
+    if (!body.title) {
+      return Response.json(
+        { success: false, error: '书籍不存在，请提供 title 和 author' },
+        { status: 400 }
+      )
+    }
+
+    book = await prisma.book.create({
+      data: {
+        id,
+        title: body.title,
+        author: body.author ?? '未知作者',
+      },
+    })
+  }
+
+  // 检查是否已有内容
+  const existing = await prisma.bookSummary.findFirst({
+    where: { bookId: id },
+    orderBy: { generatedAt: 'desc' },
+  })
+
+  if (existing?.chaptersJson) {
+    return Response.json({
+      success: true,
+      data: {
+        bookId: id,
+        book,
+        chapters: JSON.parse(existing.chaptersJson),
+        readingTime: existing.readingTime,
+        contentType: existing.contentType,
+        generatedAt: existing.generatedAt,
+      },
+    })
+  }
+
+  // AI 生成
+  try {
+    const result = await generateBookSummary({
+      bookTitle: book.title,
+      bookAuthor: book.author,
+    })
+
+    // 更新书籍元数据
+    await prisma.book.update({
+      where: { id },
+      data: {
+        category: result.book?.category ?? book.category,
+        description: result.book?.description ?? book.description,
+      },
+    })
+
+    // 存储生成结果
+    const summary = await prisma.bookSummary.create({
+      data: {
+        bookId: id,
+        pagesJson: '[]',
+        themeJson: '{}',
+        chaptersJson: JSON.stringify(result.chapters ?? []),
+        contentType: result.contentType ?? 'mixed',
+        readingTime: result.totalReadingTimeMin ?? 15,
+      },
+    })
+
+    return Response.json({
+      success: true,
+      data: {
+        bookId: id,
+        book: { ...book, category: result.book?.category, description: result.book?.description },
+        chapters: result.chapters ?? [],
+        readingTime: summary.readingTime,
+        contentType: summary.contentType,
+        generatedAt: summary.generatedAt,
+      },
+    })
+  } catch {
+    return Response.json(
+      { success: false, error: 'AI 生成失败，请稍后重试' },
+      { status: 500 }
+    )
+  }
 }

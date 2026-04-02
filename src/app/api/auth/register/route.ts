@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { hashPassword, createToken } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
+import { registerSchema } from '@/lib/validation'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,38 +18,15 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const email = typeof body.email === 'string' ? body.email.trim().slice(0, 255) : ''
-    const name = typeof body.name === 'string' ? body.name.trim().slice(0, 100) : ''
-    const password = typeof body.password === 'string' ? body.password.slice(0, 72) : ''
-
-    if (!email || !name || !password) {
+    const parsed = registerSchema.safeParse(body)
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: '请填写所有必填字段' },
+        { success: false, error: parsed.error.issues[0]?.message ?? '请填写所有必填字段' },
         { status: 400 }
       )
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { success: false, error: '邮箱格式不正确' },
-        { status: 400 }
-      )
-    }
-
-    if (password.length < 10) {
-      return NextResponse.json(
-        { success: false, error: '密码至少需要10个字符' },
-        { status: 400 }
-      )
-    }
-
-    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-      return NextResponse.json(
-        { success: false, error: '密码需包含大写字母、小写字母和数字' },
-        { status: 400 }
-      )
-    }
+    const { email, name, password } = parsed.data
 
     const existing = await prisma.user.findUnique({ where: { email } })
     if (existing) {
@@ -81,8 +59,7 @@ export async function POST(request: Request) {
     })
 
     return response
-  } catch (error) {
-    console.error('Register error:', error instanceof Error ? error.message : 'unknown')
+  } catch {
     return NextResponse.json(
       { success: false, error: '注册失败，请稍后重试' },
       { status: 500 }

@@ -1,335 +1,219 @@
 @import "tailwindcss";
 
 :root {
-  /* === Stitch Design: Digital Zen & The Futuristic Lab (v2) === */
-  /* Song Dynasty aesthetics meets futuristic research laboratory */
+  /* === Apple Minimal Design System === */
 
-  /* Primary: Vermilion Red */
-  --primary: #ad3332;
-  --primary-dim: #9c2627;
-  --primary-container: #9c2627;
-  --on-primary: #fff7f6;
-  --on-primary-container: #440004;
-  --primary-fixed: #fd6d67;
-  --primary-fixed-dim: #ec615c;
+  /* Neutral palette */
+  --black: #1D1D1F;
+  --gray-1: #424245;
+  --gray-2: #6E6E73;
+  --gray-3: #86868B;
+  --gray-4: #AEAEB2;
+  --gray-5: #D2D2D7;
+  --gray-6: #E8E8ED;
+  --gray-7: #F5F5F7;
+  --white: #FFFFFF;
 
-  /* Secondary: Jade Green */
-  --secondary: #416757;
-  --secondary-dim: #355a4b;
-  --secondary-container: #c3ecd8;
-  --on-secondary: #e5fff1;
-  --on-secondary-container: #34594a;
-  --secondary-fixed: #c3ecd8;
-  --secondary-fixed-dim: #b5ddca;
+  /* Semantic text */
+  --text-primary: var(--black);
+  --text-secondary: var(--gray-2);
+  --text-tertiary: var(--gray-3);
+  --text-quaternary: var(--gray-4);
 
-  /* Tertiary: Muted Sage */
-  --tertiary: #5b605c;
-  --tertiary-dim: #4f5450;
-  --tertiary-container: #f9fef7;
-  --on-tertiary: #f5faf4;
-  --on-tertiary-container: #5c625d;
-  --tertiary-fixed: #f9fef7;
-  --tertiary-fixed-dim: #eaefe9;
+  /* Surfaces */
+  --background: var(--gray-7);
+  --surface: var(--white);
+  --surface-secondary: var(--gray-7);
+  --surface-tertiary: var(--gray-6);
 
-  /* Surfaces - Rice Paper layering */
-  --background: #f8faf8;
-  --surface: #f8faf8;
-  --surface-dim: #d4dcd9;
-  --surface-bright: #f8faf8;
-  --surface-container-lowest: #ffffff;
-  --surface-container-low: #f1f4f2;
-  --surface-container: #eaefec;
-  --surface-container-high: #e4e9e7;
-  --surface-container-highest: #dde4e1;
-  --surface-variant: #dde4e1;
+  /* Borders */
+  --border: rgba(0, 0, 0, 0.08);
+  --border-primary: rgba(0, 0, 0, 0.08);
+  --border-secondary: rgba(0, 0, 0, 0.04);
 
-  /* Text */
-  --foreground: #2d3432;
-  --text-primary: #2d3432;
-  --text-secondary: #59615f;
-  --text-tertiary: #757c7a;
+  /* Accent — restrained warm tone */
+  --accent: #0071E3;
+  --accent-hover: #0077ED;
 
-  /* Outlines - ghost borders only */
-  --outline: #757c7a;
-  --outline-variant: #acb3b1;
+  /* Shadows — minimal, soft */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.08);
 
-  /* Surface tint */
-  --surface-tint: #ad3332;
-
-  /* Inverse */
-  --inverse-surface: #0c0f0e;
-  --inverse-on-surface: #9b9d9c;
-  --inverse-primary: #fd6d67;
-
-  /* Error */
-  --error: #a83836;
-  --error-dim: #67040d;
-  --error-container: #fa746f;
-  --on-error: #fff7f6;
-  --on-error-container: #6e0a12;
-
-  /* Tonal shadows + seal glow */
-  --shadow-ambient: 0 0 40px rgba(45, 52, 50, 0.06);
-  --shadow-seal: 0 0 20px rgba(173, 51, 50, 0.2);
-  --shadow-glow: 0 0 40px rgba(195, 236, 216, 0.3);
-
-  /* Border radius - soft precision */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 0.75rem;
-  --radius-2xl: 0.75rem;
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Legacy compat */
-  --accent: #ad3332;
-  --accent-light: #9c2627;
-  --accent-dark: #67040d;
-  --warm: #ad3332;
-  --warm-light: #9c2627;
-  --success: #416757;
-  --border-subtle: transparent;
-  --border-default: transparent;
+  /* Spacing (8px grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Reading-specific */
+  --reading-max-width: 680px;
+  --reading-line-height: 1.8;
+  --reading-paragraph-spacing: 1.5em;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: #ad3332;
-  --color-primary-light: #ec615c;
-  --color-primary-dark: #9c2627;
-  --color-secondary: #416757;
-  --color-tertiary: #5b605c;
-  --color-sidebar: #2d3432;
-  --color-banner: #0c0f0e;
-  --color-warm: #ad3332;
-  --color-meta-gray: #757c7a;
-  --color-meta-blue: #5b605c;
-  --color-border: transparent;
-  --color-card: #ffffff;
-  --color-surface: #f8faf8;
-  --color-surface-container: #eaefec;
-  --color-surface-container-low: #f1f4f2;
-  --color-surface-container-high: #e4e9e7;
-  --color-outline-variant: #acb3b1;
-  --font-sans: "Newsreader", Georgia, "Noto Serif SC", "PingFang SC", serif;
-  --font-serif: "Noto Serif", "Noto Serif SC", "LXGW WenKai", Georgia, serif;
-  --font-display: "Noto Serif", "Noto Serif SC", serif;
-  --font-label: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "Manrope", "SF Mono", "Fira Code", monospace;
+  --color-foreground: var(--text-primary);
+  --color-surface: var(--surface);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-accent: var(--accent);
+  --color-border: var(--border-primary);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Noto Sans SC", sans-serif;
+  --font-serif: "Noto Serif SC", "LXGW WenKai", "Songti SC", Georgia, serif;
+  --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Noto Sans SC", sans-serif;
+  --font-reading: "Noto Serif SC", "LXGW WenKai", "Songti SC", Georgia, serif;
+  --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+}
+
+/* ===== Animations ===== */
+@keyframes float-glow {
+  from { transform: translate(-50%, 0) scale(1); }
+  to { transform: translate(-50%, -10%) scale(1.1); }
 }
 
 /* ===== Base ===== */
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  line-height: 1.6;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-/* Rice paper texture overlay */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: rgba(173, 51, 50, 0.15);
+  background: rgba(0, 113, 227, 0.12);
   color: var(--text-primary);
 }
 
-/* ===== Focus visible ===== */
+/* ===== Focus ===== */
 :focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
 input:focus-visible,
 textarea:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--tertiary);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
 }
 
-/* ===== Vertical text (Chinese calligraphy) ===== */
-.writing-vertical {
-  writing-mode: vertical-rl;
-  text-orientation: upright;
-  letter-spacing: 0.15em;
+/* ===== Reading Typography ===== */
+.reading-body {
+  font-family: var(--font-reading);
+  line-height: var(--reading-line-height);
+  max-width: var(--reading-max-width);
+  margin: 0 auto;
+  letter-spacing: 0.01em;
 }
 
-/* ===== Animations ===== */
-.page-transition {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+.reading-body p + p {
+  margin-top: var(--reading-paragraph-spacing);
 }
 
-.hover-lift {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.hover-lift:hover {
-  transform: translateY(-2px);
-  background-color: var(--surface-bright);
+.reading-body h1,
+.reading-body h2,
+.reading-body h3,
+.reading-body h4 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--text-primary);
 }
 
-/* ===== Player bar ===== */
-.player-bar {
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+.reading-body h1 { font-size: 1.75rem; margin-top: 2.5em; margin-bottom: 0.75em; }
+.reading-body h2 { font-size: 1.375rem; margin-top: 2em; margin-bottom: 0.625em; }
+.reading-body h3 { font-size: 1.125rem; margin-top: 1.5em; margin-bottom: 0.5em; }
+.reading-body h4 { font-size: 1rem; margin-top: 1.25em; margin-bottom: 0.5em; }
+
+.reading-body blockquote {
+  border-left: 2px solid var(--gray-5);
+  padding-left: var(--space-5);
+  margin: var(--reading-paragraph-spacing) 0;
+  color: var(--text-secondary);
+  font-style: italic;
 }
 
 /* ===== Scrollbar ===== */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 3px;
+  width: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--outline-variant);
+  background: var(--gray-5);
+  border-radius: var(--radius-full);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--outline);
+  background: var(--gray-4);
 }
 
-/* ===== Glassmorphism - Futuristic Lab ===== */
-.glass {
-  background: rgba(248, 250, 248, 0.72);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-}
-.glass-dark {
-  background: rgba(12, 15, 14, 0.85);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+/* ===== Animations ===== */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* ===== Gradient text - Vermilion to Jade ===== */
-.gradient-text {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 40%, var(--tertiary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== Shimmer ===== */
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out both;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out both;
+}
+
+.animate-slide-up-delay-1 { animation-delay: 50ms; }
+.animate-slide-up-delay-2 { animation-delay: 100ms; }
+.animate-slide-up-delay-3 { animation-delay: 150ms; }
+
+/* ===== Loading shimmer ===== */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 .shimmer {
-  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.4) 50%, transparent 75%);
+  background: linear-gradient(90deg, var(--gray-6) 25%, var(--gray-7) 50%, var(--gray-6) 75%);
   background-size: 200% 100%;
-  animation: shimmer 2s infinite;
+  animation: shimmer 1.5s infinite;
 }
 
-/* ===== Seal Stamp glow ===== */
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(173, 51, 50, 0); }
-  50% { box-shadow: 0 0 20px 4px rgba(173, 51, 50, 0.15); }
-}
-.pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
-}
-
-/* ===== Float up ===== */
-@keyframes float-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.float-up {
-  animation: float-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-.float-up-delay-1 { animation-delay: 0.1s; }
-.float-up-delay-2 { animation-delay: 0.2s; }
-.float-up-delay-3 { animation-delay: 0.3s; }
-
-/* ===== Lab Grid overlay ===== */
-.lab-grid {
-  background-image:
-    linear-gradient(rgba(45, 52, 50, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(45, 52, 50, 0.03) 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-
-/* ===== Ink wash gradient ===== */
-.ink-wash {
-  background: linear-gradient(135deg,
-    rgba(45, 52, 50, 0.02) 0%,
-    rgba(173, 51, 50, 0.04) 30%,
-    rgba(65, 103, 87, 0.03) 60%,
-    rgba(91, 96, 92, 0.02) 100%
-  );
-}
-
-/* ===== Suggestion hover ===== */
-.suggestion-item {
-  background: transparent;
-  transition: background-color 0.15s;
-}
-.suggestion-item:hover,
-.suggestion-item:focus-visible {
-  background: var(--surface-container-low);
-}
-
-/* ===== Connector tree (mindmap) ===== */
-.connector-tree > * {
-  position: relative;
-}
-.connector-tree > *::before {
-  content: '';
-  position: absolute;
-  left: -24px;
-  top: 14px;
-  width: 18px;
-  height: 0;
-  border-top: 1.5px solid var(--connector-color, #757c7a80);
-}
-.connector-tree > *:last-child::after {
-  content: '';
-  position: absolute;
-  left: -25.5px;
-  top: 14px;
-  bottom: -1px;
-  width: 2px;
-  background: var(--surface-container-lowest, #fff);
-}
-
-/* ===== Settings panel animations ===== */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes settingsPanelIn {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-@media (min-width: 640px) {
-  @keyframes settingsPanelIn {
-    from {
-      transform: scale(0.9) translateY(16px);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1) translateY(0);
-      opacity: 1;
-    }
-  }
+/* ===== Vertical Chinese text ===== */
+.writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 0.15em;
 }
 
 /* ===== Reduced motion ===== */
@@ -341,19 +225,5 @@ textarea:focus-visible {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-
-  .float-up {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  .shimmer {
-    animation: none;
-  }
-
-  .pulse-glow {
-    animation: none;
   }
 }

@@ -1,64 +1,49 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import type { SummaryPage, Section, NumberedItemData } from '@/lib/types';
+import type { Chapter, ContentBlock } from '@/lib/types';
 
 export interface TTSOptions {
-  rate?: number;   // 语速 0.5-2.0, 默认 1.0
-  pitch?: number;  // 音调 0-2, 默认 1.0
-  voice?: string;  // 语音名称
+  rate?: number;
+  pitch?: number;
+  voice?: string;
 }
 
 export interface TTSState {
   isPlaying: boolean;
   isPaused: boolean;
-  currentPage: number;
-  progress: number; // 0-100 当前页朗读进度
+  currentChapter: number;
+  progress: number;
   availableVoices: SpeechSynthesisVoice[];
 }
 
-// 从Section提取纯文本
-function extractTextFromSection(section: Section): string {
-  let text = section.content || '';
-
-  if (section.items) {
-    text += section.items.map((item: NumberedItemData) => {
-      let itemText = `第${item.number}点，${item.title}。`;
-      if (item.description) itemText += item.description;
-      return itemText;
-    }).join('');
+function extractTextFromBlock(block: ContentBlock): string {
+  let text = block.content || '';
+  if (block.children) {
+    text += block.children.map(extractTextFromBlock).join('');
   }
-
-  if (section.children) {
-    text += section.children.map(extractTextFromSection).join('');
-  }
-
   return text;
 }
 
-// 从SummaryPage提取纯文本
-function extractTextFromPage(page: SummaryPage): string {
-  const parts: string[] = [];
-  parts.push(page.chapterTitle + '。');
-
-  for (const section of page.sections) {
-    const sectionText = extractTextFromSection(section);
-    if (sectionText.trim()) {
-      parts.push(sectionText);
+function extractTextFromChapter(chapter: Chapter): string {
+  const parts: string[] = [chapter.title + '。'];
+  for (const block of chapter.blocks) {
+    const blockText = extractTextFromBlock(block);
+    if (blockText.trim()) {
+      parts.push(blockText);
     }
   }
-
   return parts.join('\n');
 }
 
 export function useTTS(
-  pages: SummaryPage[],
-  onPageChange?: (page: number) => void
+  chapters: Chapter[],
+  onChapterChange?: (chapterIndex: number) => void
 ) {
   const [state, setState] = useState<TTSState>({
     isPlaying: false,
     isPaused: false,
-    currentPage: 1,
+    currentChapter: 0,
     progress: 0,
     availableVoices: [],
   });
@@ -71,10 +56,9 @@ export function useTTS(
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const shouldContinueRef = useRef(false);
   const totalCharsRef = useRef(0);
-  const speakPageRef = useRef<(pageNumber: number) => void>(() => {});
-  const nextPageTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const speakChapterRef = useRef<(index: number) => void>(() => {});
+  const nextChapterTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 加载可用语音
   useEffect(() => {
     const loadVoices = () => {
       const voices = speechSynthesis.getVoices();
@@ -92,16 +76,14 @@ export function useTTS(
     return () => speechSynthesis.removeEventListener('voiceschanged', loadVoices);
   }, []);
 
-  // 朗读单页
-  const speakPage = useCallback(
-    (pageNumber: number) => {
-      const page = pages.find((p) => p.pageNumber === pageNumber);
-      if (!page) return;
+  const speakChapter = useCallback(
+    (chapterIndex: number) => {
+      const chapter = chapters[chapterIndex];
+      if (!chapter) return;
 
-      // 停止当前朗读
       speechSynthesis.cancel();
 
-      const text = extractTextFromPage(page);
+      const text = extractTextFromChapter(chapter);
       totalCharsRef.current = text.length;
 
       const utterance = new SpeechSynthesisUtterance(text);
@@ -109,7 +91,6 @@ export function useTTS(
       utterance.rate = options.rate || 1.0;
       utterance.pitch = options.pitch || 1.0;
 
-      // 选择中文语音
       if (options.voice) {
         const voice = state.availableVoices.find((v) => v.name === options.voice);
         if (voice) utterance.voice = voice;
@@ -120,7 +101,6 @@ export function useTTS(
         if (zhVoice) utterance.voice = zhVoice;
       }
 
-      // 进度追踪
       utterance.onboundary = (event) => {
         if (totalCharsRef.current > 0) {
           const progress = Math.min(
@@ -131,29 +111,26 @@ export function useTTS(
         }
       };
 
-      // 朗读完成，自动切换下一页
       utterance.onend = () => {
         setState((prev) => ({ ...prev, progress: 100 }));
 
-        if (shouldContinueRef.current && pageNumber < pages.length) {
-          const nextPage = pageNumber + 1;
+        if (shouldContinueRef.current && chapterIndex < chapters.length - 1) {
+          const nextChapter = chapterIndex + 1;
           setState((prev) => ({
             ...prev,
-            currentPage: nextPage,
+            currentChapter: nextChapter,
             progress: 0,
           }));
-          onPageChange?.(nextPage);
-          // 短暂停顿后朗读下一页
-          if (nextPageTimeoutRef.current) {
-            clearTimeout(nextPageTimeoutRef.current);
+          onChapterChange?.(nextChapter);
+          if (nextChapterTimeoutRef.current) {
+            clearTimeout(nextChapterTimeoutRef.current);
           }
-          nextPageTimeoutRef.current = setTimeout(() => {
+          nextChapterTimeoutRef.current = setTimeout(() => {
             if (shouldContinueRef.current) {
-              speakPageRef.current(nextPage);
+              speakChapterRef.current(nextChapter);
             }
           }, 800);
         } else {
-          // 全部朗读完毕
           setState((prev) => ({
             ...prev,
             isPlaying: false,
@@ -176,50 +153,45 @@ export function useTTS(
       utteranceRef.current = utterance;
       speechSynthesis.speak(utterance);
     },
-    [pages, options, state.availableVoices, onPageChange]
+    [chapters, options, state.availableVoices, onChapterChange]
   );
 
-  // Keep ref in sync
   useEffect(() => {
-    speakPageRef.current = speakPage;
-  }, [speakPage]);
+    speakChapterRef.current = speakChapter;
+  }, [speakChapter]);
 
-  // 播放
   const play = useCallback(
-    (fromPage?: number) => {
-      const startPage = fromPage || state.currentPage;
+    (fromChapter?: number) => {
+      const startChapter = fromChapter ?? state.currentChapter;
       shouldContinueRef.current = true;
       setState((prev) => ({
         ...prev,
         isPlaying: true,
         isPaused: false,
-        currentPage: startPage,
+        currentChapter: startChapter,
         progress: 0,
       }));
-      onPageChange?.(startPage);
-      speakPage(startPage);
+      onChapterChange?.(startChapter);
+      speakChapter(startChapter);
     },
-    [state.currentPage, speakPage, onPageChange]
+    [state.currentChapter, speakChapter, onChapterChange]
   );
 
-  // 暂停
   const pause = useCallback(() => {
     speechSynthesis.pause();
     setState((prev) => ({ ...prev, isPaused: true }));
   }, []);
 
-  // 恢复
   const resume = useCallback(() => {
     speechSynthesis.resume();
     setState((prev) => ({ ...prev, isPaused: false }));
   }, []);
 
-  // 停止
   const stop = useCallback(() => {
     shouldContinueRef.current = false;
-    if (nextPageTimeoutRef.current) {
-      clearTimeout(nextPageTimeoutRef.current);
-      nextPageTimeoutRef.current = null;
+    if (nextChapterTimeoutRef.current) {
+      clearTimeout(nextChapterTimeoutRef.current);
+      nextChapterTimeoutRef.current = null;
     }
     speechSynthesis.cancel();
     setState((prev) => ({
@@ -230,30 +202,27 @@ export function useTTS(
     }));
   }, []);
 
-  // 跳转到指定页播放
-  const skipToPage = useCallback(
-    (pageNumber: number) => {
-      if (pageNumber < 1 || pageNumber > pages.length) return;
-      setState((prev) => ({ ...prev, currentPage: pageNumber, progress: 0 }));
-      onPageChange?.(pageNumber);
+  const skipToChapter = useCallback(
+    (chapterIndex: number) => {
+      if (chapterIndex < 0 || chapterIndex >= chapters.length) return;
+      setState((prev) => ({ ...prev, currentChapter: chapterIndex, progress: 0 }));
+      onChapterChange?.(chapterIndex);
       if (state.isPlaying) {
         speechSynthesis.cancel();
-        speakPage(pageNumber);
+        speakChapter(chapterIndex);
       }
     },
-    [pages.length, state.isPlaying, speakPage, onPageChange]
+    [chapters.length, state.isPlaying, speakChapter, onChapterChange]
   );
 
-  // 更新设置
   const updateOptions = useCallback((newOptions: Partial<TTSOptions>) => {
     setOptions((prev) => ({ ...prev, ...newOptions }));
   }, []);
 
-  // 清理
   useEffect(() => {
     return () => {
-      if (nextPageTimeoutRef.current) {
-        clearTimeout(nextPageTimeoutRef.current);
+      if (nextChapterTimeoutRef.current) {
+        clearTimeout(nextChapterTimeoutRef.current);
       }
       speechSynthesis.cancel();
     };
@@ -266,7 +235,7 @@ export function useTTS(
     pause,
     resume,
     stop,
-    skipToPage,
+    skipToChapter,
     updateOptions,
   };
 }

@@ -1,10 +1,19 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
+import AuthProvider from "@/components/auth/AuthProvider";
+import BottomNav from "@/components/layout/BottomNav";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Read Is Big - 15分钟读懂一本好书",
-  description: "AI 提炼书籍精华，思维导图式呈现，让你快速获取一本书的核心价值",
+  title: "Read Is Big — 15分钟，读懂一本好书",
+  description: "AI 深度解读书籍精华，沉浸式阅读体验，让你快速获取一本书的核心价值",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -13,13 +22,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="h-full antialiased" suppressHydrationWarning>
+    <html lang="zh-CN" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Stitch Design System Fonts v2: Noto Serif (Headline), Newsreader (Body), Manrope (Labels) */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&family=Noto+Serif:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
         <link
@@ -27,8 +35,11 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--text-primary)]">
-        {children}
+      <body className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] antialiased">
+        <AuthProvider>
+          {children}
+          <BottomNav />
+        </AuthProvider>
         <Analytics />
       </body>
     </html>

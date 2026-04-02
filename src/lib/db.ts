@@ -7,7 +7,7 @@ function getPrismaClient(): PrismaClient {
   if (globalForPrisma.prisma) return globalForPrisma.prisma
 
   const adapter = new PrismaLibSql({
-    url: process.env.DATABASE_URL || 'file:./prisma/dev.db',
+    url: process.env.DATABASE_URL || 'file:./dev.db',
   })
 
   const client = new PrismaClient({

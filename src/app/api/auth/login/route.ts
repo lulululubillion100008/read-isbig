@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { verifyPassword, createToken } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
+import { loginSchema } from '@/lib/validation'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,15 +18,15 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const email = typeof body.email === 'string' ? body.email.trim().slice(0, 255) : ''
-    const password = typeof body.password === 'string' ? body.password.slice(0, 72) : ''
-
-    if (!email || !password) {
+    const parsed = loginSchema.safeParse(body)
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: '请填写邮箱和密码' },
+        { success: false, error: parsed.error.issues[0]?.message ?? '请填写邮箱和密码' },
         { status: 400 }
       )
     }
+
+    const { email, password } = parsed.data
 
     const user = await prisma.user.findUnique({ where: { email } })
     if (!user) {
@@ -61,8 +62,7 @@ export async function POST(request: Request) {
     })
 
     return response
-  } catch (error) {
-    console.error('Login error:', error instanceof Error ? error.message : 'unknown')
+  } catch {
     return NextResponse.json(
       { success: false, error: '登录失败，请稍后重试' },
       { status: 500 }

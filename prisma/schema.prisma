@@ -7,39 +7,78 @@ generator client {
   output   = "../node_modules/.prisma/client"
 }
 
+// ─── Users ───────────────────────────────────────────────
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  password  String
-  avatar    String?
-  createdAt DateTime @default(now())
-  history   ReadingHistory[]
-  favorites UserFavorite[]
+  id            String           @id @default(cuid())
+  email         String           @unique
+  name          String
+  password      String
+  avatar        String?
+  createdAt     DateTime         @default(now())
+  history       ReadingHistory[]
+  favorites     UserFavorite[]
+  sessions      ReadingSession[]
+  conversations AIConversation[]
+  preferences   UserPreferences?
 }
 
+model UserPreferences {
+  id             String @id @default(cuid())
+  userId         String @unique
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interests      String @default("[]")
+  readingGoal    String?
+  preferredStyle String?
+  theme          String @default("light")
+}
+
+// ─── Books ───────────────────────────────────────────────
+
 model Book {
-  id         String   @id @default(cuid())
-  title      String
-  author     String
-  coverImage String?
-  category   String?
-  createdAt  DateTime @default(now())
-  summaries  BookSummary[]
-  history    ReadingHistory[]
-  favorites  UserFavorite[]
+  id            String           @id @default(cuid())
+  title         String
+  author        String
+  coverImage    String?
+  category      String?
+  description   String?
+  score         Float?
+  publishYear   Int?
+  totalReaders  Int              @default(0)
+  tagsJson      String?
+  createdAt     DateTime         @default(now())
+  summaries     BookSummary[]
+  history       ReadingHistory[]
+  favorites     UserFavorite[]
+  sessions      ReadingSession[]
+  conversations AIConversation[]
+  scene         BookScene?
 }
 
 model BookSummary {
-  id          String   @id @default(cuid())
-  bookId      String
-  book        Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  pagesJson   String
-  themeJson   String
-  readingTime Int      @default(15)
-  generatedAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  bookId       String
+  book         Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  pagesJson    String
+  themeJson    String
+  chaptersJson String?
+  contentType  String   @default("summary")
+  readingTime  Int      @default(15)
+  generatedAt  DateTime @default(now())
+
   @@index([bookId])
 }
+
+model BookScene {
+  id          String   @id @default(cuid())
+  bookId      String   @unique
+  book        Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  sceneType   String
+  sceneConfig String
+  generatedAt DateTime @default(now())
+}
+
+// ─── Reading ─────────────────────────────────────────────
 
 model ReadingHistory {
   id           String   @id @default(cuid())
@@ -49,8 +88,23 @@ model ReadingHistory {
   book         Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   lastReadPage Int      @default(0)
   readAt       DateTime @default(now())
+
   @@unique([userId, bookId])
   @@index([userId])
+}
+
+model ReadingSession {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId      String
+  book        Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  startedAt   DateTime  @default(now())
+  endedAt     DateTime?
+  durationMin Int       @default(0)
+
+  @@index([userId])
+  @@index([bookId])
 }
 
 model UserFavorite {
@@ -60,6 +114,32 @@ model UserFavorite {
   bookId    String
   book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+
   @@unique([userId, bookId])
   @@index([userId])
+}
+
+// ─── AI Conversations ────────────────────────────────────
+
+model AIConversation {
+  id        String      @id @default(cuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId    String
+  book      Book        @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+  messages  AIMessage[]
+
+  @@index([userId, bookId])
+}
+
+model AIMessage {
+  id             String         @id @default(cuid())
+  conversationId String
+  conversation   AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String
+  content        String
+  createdAt      DateTime       @default(now())
+
+  @@index([conversationId])
 }
