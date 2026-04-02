@@ -31,12 +31,10 @@ export async function GET(request: NextRequest) {
       data: books,
       meta: { total, page, limit },
     })
-  } catch (error) {
-    return Response.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      dbUrl: process.env.DATABASE_URL ? 'set' : 'missing',
-      authToken: process.env.DATABASE_AUTH_TOKEN ? 'set' : 'missing',
-    }, { status: 500 })
+  } catch {
+    return Response.json(
+      { success: false, error: '获取书籍列表失败' },
+      { status: 500 }
+    )
   }
 }
