@@ -6,6 +6,8 @@ import Link from 'next/link';
 import BookCard from '@/components/home/BookCard';
 import LibraryTabs from '@/components/library/LibraryTabs';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: '我的书架 - Read Is Big',
 };

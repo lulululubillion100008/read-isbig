@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import BookReaderWrapper from './BookReaderWrapper';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await props.params;
   const book = await prisma.book.findUnique({ where: { id } });

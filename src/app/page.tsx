@@ -4,6 +4,8 @@ import BookCard from '@/components/home/BookCard';
 import CategoryPills from '@/components/home/CategoryPills';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   // 查询最新书籍
   const books = await prisma.book.findMany({

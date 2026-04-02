@@ -5,6 +5,8 @@ import { verifyToken } from '@/lib/auth';
 import Link from 'next/link';
 import StatsOverview from '@/components/stats/StatsOverview';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: '阅读统计 - Read Is Big',
 };
