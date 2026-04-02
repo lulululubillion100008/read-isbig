@@ -5,7 +5,9 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaLibSql } from '@prisma/adapter-libsql';
 
-const adapter = new PrismaLibSql({ url: 'file:./dev.db' });
+const url = process.env.DATABASE_URL || 'file:./dev.db';
+const authToken = process.env.DATABASE_AUTH_TOKEN;
+const adapter = new PrismaLibSql({ url, ...(authToken ? { authToken } : {}) });
 const prisma = new PrismaClient({ adapter });
 
 // ─── 唐诗三百首 内容 ───────────────────────────────────────
@@ -198,6 +200,33 @@ const thinkingScene = {
 
 async function main() {
   console.log('开始填充内容...');
+
+  // 确保 Book 记录存在
+  await prisma.book.upsert({
+    where: { id: 'book-tang-poetry' },
+    update: {},
+    create: {
+      id: 'book-tang-poetry',
+      title: '唐诗三百首',
+      author: '蘅塘退士',
+      category: '诗歌',
+      description: '中国古典诗歌的巅峰之作，精选唐代名篇，涵盖李白、杜甫、王维等大家的传世佳作',
+      score: 9.2,
+    },
+  });
+  await prisma.book.upsert({
+    where: { id: 'book-thinking-fast' },
+    update: {},
+    create: {
+      id: 'book-thinking-fast',
+      title: '思考，快与慢',
+      author: '丹尼尔·卡尼曼',
+      category: '心理学',
+      description: '诺贝尔经济学奖得主揭示人类思维的两套系统，颠覆你对理性决策的认知',
+      score: 8.8,
+    },
+  });
+  console.log('✓ 书籍元数据已确认');
 
   // 唐诗三百首 — BookSummary
   const existingTang = await prisma.bookSummary.findFirst({

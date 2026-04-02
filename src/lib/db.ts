@@ -6,8 +6,12 @@ const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefi
 function getPrismaClient(): PrismaClient {
   if (globalForPrisma.prisma) return globalForPrisma.prisma
 
+  const url = process.env.DATABASE_URL || 'file:./dev.db'
+  const authToken = process.env.DATABASE_AUTH_TOKEN
+
   const adapter = new PrismaLibSql({
-    url: process.env.DATABASE_URL || 'file:./dev.db',
+    url,
+    ...(authToken ? { authToken } : {}),
   })
 
   const client = new PrismaClient({
