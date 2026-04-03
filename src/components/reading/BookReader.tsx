@@ -59,7 +59,10 @@ export default function BookReader({ book, content, scene }: BookReaderProps) {
       />
 
       {/* 主内容区 */}
-      <div className="relative z-10 flex-1 overflow-hidden pt-14">
+      <div
+        className="relative z-10 flex-1 overflow-hidden pt-14"
+        style={{ backgroundColor: bgTheme.bg }}
+      >
         {/* 书籍头部 - 只在滚动模式下显示 */}
         {settings.readingMode === 'scroll' && (
           <div className="sr-only">
