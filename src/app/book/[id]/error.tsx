@@ -1,11 +1,13 @@
 'use client';
 
 export default function BookError({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  console.error('Book error:', error.message, error.digest);
   return (
     <div className="flex min-h-screen items-center justify-center px-6 bg-[var(--background)]">
       <div className="text-center">

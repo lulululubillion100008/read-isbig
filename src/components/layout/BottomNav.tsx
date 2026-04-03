@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
@@ -53,6 +53,8 @@ export default function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
+  const openAuth = useCallback(() => setShowAuth(true), []);
+  const closeAuth = useCallback(() => setShowAuth(false), []);
 
   // 阅读页面隐藏导航
   if (pathname.startsWith('/book/')) return null;
@@ -72,7 +74,7 @@ export default function BottomNav() {
               return (
                 <button
                   key={item.href}
-                  onClick={() => setShowAuth(true)}
+                  onClick={openAuth}
                   className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors text-[var(--text-quaternary)]`}
                 >
                   {item.icon}
@@ -97,25 +99,10 @@ export default function BottomNav() {
             );
           })}
 
-          {/* 用户/登录按钮 */}
-          {user ? (
-            <Link
-              href="/stats"
-              className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors ${
-                pathname === '/profile'
-                  ? 'text-[var(--text-primary)]'
-                  : 'text-[var(--text-quaternary)]'
-              }`}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="8" r="4" />
-                <path d="M20 21a8 8 0 1 0-16 0" />
-              </svg>
-              {user.name.slice(0, 2)}
-            </Link>
-          ) : (
+          {/* 登录按钮（仅未登录时显示） */}
+          {!user && (
             <button
-              onClick={() => setShowAuth(true)}
+              onClick={openAuth}
               className="flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors text-[var(--text-quaternary)]"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -130,8 +117,8 @@ export default function BottomNav() {
 
       <AuthModal
         isOpen={showAuth}
-        onClose={() => setShowAuth(false)}
-        onLogin={() => setShowAuth(false)}
+        onClose={closeAuth}
+        onLogin={closeAuth}
       />
     </>
   );

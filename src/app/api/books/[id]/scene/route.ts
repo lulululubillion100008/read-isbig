@@ -56,15 +56,18 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
  * POST /api/books/[id]/scene — AI 生成并缓存场景（需登录）
  */
 export async function POST(req: NextRequest, { params }: RouteParams) {
+  const userId = getUserIdFromRequest(req);
+  if (!userId) {
+    return NextResponse.json({ success: false, error: '请先登录' }, { status: 401 });
+  }
+
   const { id } = await params;
   const parsed = bookIdSchema.safeParse({ bookId: id });
   if (!parsed.success) {
     return NextResponse.json({ success: false, error: '无效的书籍ID' }, { status: 400 });
   }
 
-  const ip = req.headers.get('x-forwarded-for') ?? 'anonymous';
-  const userId = getUserIdFromRequest(req);
-  const { success: allowed } = rateLimit(`scene:${userId ?? ip}`, 5, 60_000);
+  const { success: allowed } = rateLimit(`scene:${userId}`, 5, 60_000);
   if (!allowed) {
     return NextResponse.json(
       { success: false, error: '请求过于频繁，请稍后重试' },

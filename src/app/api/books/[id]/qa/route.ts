@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { getUserIdFromRequest } from '@/lib/auth';
 import { rateLimit } from '@/lib/rate-limit';
-import { aiQuestionSchema } from '@/lib/validation';
+import { aiQuestionSchema, bookIdSchema } from '@/lib/validation';
 import { streamQA } from '@/lib/ai/qa';
 
 type RouteParams = { params: Promise<{ id: string }> };
@@ -17,6 +17,11 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
   }
 
   const { id } = await params;
+
+  const idCheck = bookIdSchema.safeParse({ bookId: id });
+  if (!idCheck.success) {
+    return NextResponse.json({ success: false, error: '无效的书籍ID' }, { status: 400 });
+  }
 
   const { success: allowed } = rateLimit(`qa:${userId}`, 10, 60_000);
   if (!allowed) {

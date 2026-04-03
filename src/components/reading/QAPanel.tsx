@@ -22,10 +22,11 @@ export default function QAPanel({ bookId, bookTitle, onClose }: QAPanelProps) {
     }
   }, [messages]);
 
-  // 打开时聚焦输入框
+  // 打开时聚焦输入框，关闭时 abort 流
   useEffect(() => {
     inputRef.current?.focus();
-  }, []);
+    return () => stopStreaming();
+  }, [stopStreaming]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +71,8 @@ export default function QAPanel({ bookId, bookTitle, onClose }: QAPanelProps) {
                 <button
                   key={q}
                   onClick={() => sendMessage(q)}
-                  className="rounded-full border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--gray-6)]"
+                  disabled={isStreaming}
+                  className={`rounded-full border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--gray-6)] ${isStreaming ? 'opacity-40 pointer-events-none' : ''}`}
                 >
                   {q}
                 </button>

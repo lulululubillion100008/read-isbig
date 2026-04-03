@@ -121,6 +121,7 @@ export default function PageReader({
           <button
             key={i}
             onClick={() => {
+              if (i === currentIndex) return;
               setDirection(i > currentIndex ? 1 : -1);
               setCurrentIndex(i);
               onChapterChange?.(i);

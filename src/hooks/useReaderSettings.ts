@@ -1,5 +1,5 @@
 'use client'
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import type { ReadingMode, BackgroundTheme } from '@/lib/types'
 
 export type FontFamily = 'noto-sans' | 'noto-serif' | 'lxgw-wenkai' | 'system';
@@ -51,17 +51,22 @@ export function useReaderSettings() {
     }
   }, []);
 
+  // Persist settings to localStorage whenever they change (after hydration)
+  const isHydrated = useRef(false);
+  useEffect(() => {
+    if (!isHydrated.current) {
+      isHydrated.current = true;
+      return;
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    } catch {
+      // localStorage full or unavailable
+    }
+  }, [settings]);
+
   const updateSettings = useCallback((updates: Partial<ReaderSettings>) => {
-    setSettings(prev => {
-      const next = { ...prev, ...updates };
-      // persist outside the updater to avoid side effects in StrictMode double-invoke
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      } catch {
-        // localStorage full or unavailable
-      }
-      return next;
-    });
+    setSettings(prev => ({ ...prev, ...updates }));
   }, []);
 
   const getFontCSS = useCallback(() => {

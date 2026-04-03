@@ -29,11 +29,22 @@ export default async function StatsPage() {
     );
   }
 
-  const payload = verifyToken(token);
+  let payload: { userId: string } | null;
+  try {
+    payload = verifyToken(token);
+  } catch {
+    payload = null;
+  }
   if (!payload) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center px-6">
-        <p className="text-sm text-[var(--text-tertiary)]">登录已过期</p>
+        <p className="text-sm text-[var(--text-tertiary)]">登录已过期，请重新登录</p>
+        <Link
+          href="/"
+          className="mt-4 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+        >
+          &larr; 返回首页
+        </Link>
       </main>
     );
   }

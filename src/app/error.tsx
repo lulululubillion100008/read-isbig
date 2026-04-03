@@ -1,11 +1,13 @@
 'use client';
 
 export default function GlobalError({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  console.error('Global error:', error.message, error.digest);
   return (
     <div
       className="flex min-h-screen items-center justify-center px-6"

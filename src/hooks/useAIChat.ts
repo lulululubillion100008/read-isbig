@@ -17,15 +17,13 @@ export function useAIChat({ bookId }: UseAIChatOptions) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-  const messagesRef = useRef<ChatMessage[]>([]);
   const isStreamingRef = useRef(false);
-
-  // 同步 ref
+  const messagesRef = useRef<ChatMessage[]>([]);
   messagesRef.current = messages;
-  isStreamingRef.current = isStreaming;
 
   const sendMessage = useCallback(async (question: string) => {
     if (!question.trim() || isStreamingRef.current) return;
+    isStreamingRef.current = true;
 
     setError(null);
     const userMsg: ChatMessage = {
@@ -80,12 +78,9 @@ export function useAIChat({ bookId }: UseAIChatOptions) {
         accumulated += decoder.decode(value, { stream: true });
 
         const current = accumulated;
-        setMessages((prev) => {
-          const updated = [...prev];
-          const lastIdx = updated.length - 1;
-          updated[lastIdx] = { ...updated[lastIdx], content: current };
-          return updated;
-        });
+        setMessages((prev) =>
+          prev.map((m) => m.id === assistantMsg.id ? { ...m, content: current } : m)
+        );
       }
     } catch (err) {
       if ((err as Error).name === 'AbortError') return;
@@ -99,6 +94,7 @@ export function useAIChat({ bookId }: UseAIChatOptions) {
         return prev;
       });
     } finally {
+      isStreamingRef.current = false;
       setIsStreaming(false);
       abortRef.current = null;
     }

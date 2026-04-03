@@ -105,6 +105,18 @@ export default function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) 
       setError('密码至少需要10个字符')
       return
     }
+    if (!/[a-z]/.test(regPassword)) {
+      setError('密码需包含小写字母')
+      return
+    }
+    if (!/[A-Z]/.test(regPassword)) {
+      setError('密码需包含大写字母')
+      return
+    }
+    if (!/\d/.test(regPassword)) {
+      setError('密码需包含数字')
+      return
+    }
 
     setLoading(true)
 

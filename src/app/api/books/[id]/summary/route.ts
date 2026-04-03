@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db'
 import { generateBookSummary } from '@/lib/ai/summary'
 import { getUserIdFromRequest } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
+import { bookIdSchema } from '@/lib/validation'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,11 +50,19 @@ export async function POST(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
+  const userId = getUserIdFromRequest(request)
+  if (!userId) {
+    return Response.json({ success: false, error: '请先登录' }, { status: 401 })
+  }
+
   const { id } = await context.params
 
-  const ip = request.headers.get('x-forwarded-for') ?? 'anonymous'
-  const userId = getUserIdFromRequest(request)
-  const rateLimitKey = userId ? `generate:${userId}` : `generate:${ip}`
+  const parsed = bookIdSchema.safeParse({ bookId: id })
+  if (!parsed.success) {
+    return Response.json({ success: false, error: '无效的书籍ID' }, { status: 400 })
+  }
+
+  const rateLimitKey = `generate:${userId}`
   const { success: allowed } = rateLimit(rateLimitKey, 3, 60_000)
   if (!allowed) {
     return Response.json(

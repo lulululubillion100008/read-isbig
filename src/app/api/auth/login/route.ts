@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { verifyPassword, createToken } from '@/lib/auth'
-import { rateLimit } from '@/lib/rate-limit'
+import { rateLimit, getClientIp } from '@/lib/rate-limit'
 import { loginSchema } from '@/lib/validation'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
   try {
-    const ip = request.headers.get('x-forwarded-for') ?? 'anonymous'
+    const ip = getClientIp(request)
     const { success: allowed } = rateLimit(`login:${ip}`, 5, 60_000)
     if (!allowed) {
       return NextResponse.json(
