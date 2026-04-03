@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import { useScrollDirection } from '@/hooks/useScrollDirection';
 import AuthModal from '@/components/auth/AuthModal';
 
 const NAV_ITEMS = [
@@ -19,6 +20,7 @@ export default function BottomNav() {
   const [showAuth, setShowAuth] = useState(false);
   const openAuth = useCallback(() => setShowAuth(true), []);
   const closeAuth = useCallback(() => setShowAuth(false), []);
+  const scrollDir = useScrollDirection(15);
 
   // 阅读页面隐藏导航
   if (pathname.startsWith('/book/')) return null;
@@ -28,10 +30,20 @@ export default function BottomNav() {
   const isActive = (href: string) =>
     pathname === href || (href !== '/' && pathname.startsWith(href));
 
+  // 下滑隐藏，上滑或在顶部时显示
+  const hidden = scrollDir === 'down';
+
   return (
     <>
       {/* ─── 桌面顶部导航 ─── */}
-      <header className="fixed top-0 left-0 right-0 z-30 hidden border-b border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur-lg md:block">
+      <header
+        className="fixed left-0 right-0 z-30 hidden border-b border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur-lg md:block"
+        style={{
+          top: 0,
+          transform: hidden ? 'translateY(-100%)' : 'translateY(0)',
+          transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
           <Link href="/" className="text-lg font-bold tracking-tight text-[var(--text-primary)] font-serif">
             Read Is Big
@@ -91,7 +103,14 @@ export default function BottomNav() {
       </header>
 
       {/* ─── 移动端底部导航 ─── */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur-lg md:hidden">
+      <nav
+        className="fixed left-0 right-0 z-30 border-t border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur-lg md:hidden"
+        style={{
+          bottom: 0,
+          transform: hidden ? 'translateY(100%)' : 'translateY(0)',
+          transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
         <div className="mx-auto flex max-w-lg">
           {NAV_ITEMS.map((item) => {
             if (needsAuth(item.href) && !user) {
