@@ -46,7 +46,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <main className="mx-auto min-h-screen max-w-5xl px-4 pb-24 pt-8 md:px-6">
+    <main className="mx-auto min-h-screen max-w-5xl px-4 pb-24 pt-8 md:px-6 md:pt-20">
       {/* 头部 */}
       <div className="mb-8 flex items-center justify-between">
         <div>

@@ -22,7 +22,7 @@ export default async function Home() {
   });
 
   return (
-    <main className="mx-auto min-h-screen max-w-5xl px-4 pb-24 pt-12 md:px-6">
+    <main className="mx-auto min-h-screen max-w-5xl px-4 pb-24 pt-12 md:px-6 md:pt-20">
       {/* 头部 */}
       <div className="mb-10 flex flex-col items-center text-center">
         <h1 className="text-3xl font-bold tracking-tight text-[var(--text-primary)] md:text-4xl">

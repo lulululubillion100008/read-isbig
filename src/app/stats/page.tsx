@@ -72,7 +72,7 @@ export default async function StatsPage() {
   ]);
 
   return (
-    <main className="mx-auto min-h-screen max-w-3xl px-4 pb-24 pt-8 md:px-6">
+    <main className="mx-auto min-h-screen max-w-3xl px-4 pb-24 pt-8 md:px-6 md:pt-20">
       <div className="mb-8">
         <Link
           href="/"
