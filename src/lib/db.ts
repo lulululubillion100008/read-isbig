@@ -16,6 +16,7 @@ function getPrismaClient(): PrismaClient {
 
   const client = new PrismaClient({
     adapter,
+    datasourceUrl: 'file:./placeholder.db',
     log: process.env.NODE_ENV === 'development' ? ['query', 'error'] : ['error'],
   })
   globalForPrisma.prisma = client
