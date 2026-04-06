@@ -41,7 +41,7 @@ export async function GET() {
   try {
     const { createClient } = await import('@libsql/client')
     info.importOk = true
-    const client = createClient({ url: urlToTest, authToken: authToken! })
+    const client = createClient({ url: urlToTest, authToken: authToken!, fetch: globalThis.fetch })
     info.clientCreated = true
     const result = await client.execute('SELECT COUNT(*) as cnt FROM Book')
     info.libsqlCount = result.rows[0]?.cnt
@@ -52,7 +52,7 @@ export async function GET() {
   // Test 3: Try @libsql/client/http directly
   try {
     const { createClient: createHttp } = await import('@libsql/client/http')
-    const client = createHttp({ url: urlToTest, authToken: authToken! })
+    const client = createHttp({ url: urlToTest, authToken: authToken!, fetch: globalThis.fetch })
     const result = await client.execute('SELECT COUNT(*) as cnt FROM Book')
     info.httpClientCount = result.rows[0]?.cnt
     info.httpClientOk = true

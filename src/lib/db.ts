@@ -13,6 +13,8 @@ function getPrismaClient(): PrismaClient {
   const adapter = new PrismaLibSql({
     url,
     ...(authToken ? { authToken } : {}),
+    // Use native fetch instead of cross-fetch to avoid URL parsing issues on Vercel
+    fetch: globalThis.fetch,
   })
 
   const client = new PrismaClient({
