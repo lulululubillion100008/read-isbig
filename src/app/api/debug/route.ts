@@ -32,16 +32,23 @@ export async function GET() {
     info.fetchError = error instanceof Error ? error.message : String(error)
   }
 
-  // Test 2: @libsql/client with various approaches
-  const urlToTest = httpUrl
-  info.urlBytes = Buffer.from(urlToTest).toString('hex').substring(0, 40)
-  info.urlLength = urlToTest.length
-  info.urlValid = (() => { try { new URL(urlToTest); return true } catch { return false } })()
+  // Test 2: Check cross-fetch patch status
+  try {
+    const crossFetch = await import('cross-fetch')
+    const cfReq = new crossFetch.Request('https://example.com')
+    const nativeReq = new Request('https://example.com')
+    info.crossFetchPatched = cfReq.constructor.name === nativeReq.constructor.name
+    info.crossFetchRequestName = cfReq.constructor.name
+    info.nativeRequestName = nativeReq.constructor.name
+  } catch (error) {
+    info.crossFetchError = error instanceof Error ? error.message : String(error)
+  }
 
+  // Test 3: @libsql/client
   try {
     const { createClient } = await import('@libsql/client')
     info.importOk = true
-    const client = createClient({ url: urlToTest, authToken: authToken!, fetch: globalThis.fetch })
+    const client = createClient({ url: httpUrl, authToken: authToken! })
     info.clientCreated = true
     const result = await client.execute('SELECT COUNT(*) as cnt FROM Book')
     info.libsqlCount = result.rows[0]?.cnt
@@ -49,15 +56,13 @@ export async function GET() {
     info.libsqlError = error instanceof Error ? `${error.message} | ${error.stack?.split('\n').slice(0, 4).join(' -> ')}` : String(error)
   }
 
-  // Test 3: Try @libsql/client/http directly
+  // Test 4: Prisma
   try {
-    const { createClient: createHttp } = await import('@libsql/client/http')
-    const client = createHttp({ url: urlToTest, authToken: authToken!, fetch: globalThis.fetch })
-    const result = await client.execute('SELECT COUNT(*) as cnt FROM Book')
-    info.httpClientCount = result.rows[0]?.cnt
-    info.httpClientOk = true
+    const { prisma } = await import('@/lib/db')
+    const count = await prisma.book.count()
+    info.prismaCount = count
   } catch (error) {
-    info.httpClientError = error instanceof Error ? error.message : String(error)
+    info.prismaError = error instanceof Error ? error.message : String(error)
   }
 
   return Response.json(info)
