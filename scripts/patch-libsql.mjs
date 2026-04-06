@@ -71,6 +71,9 @@ try {
     resolve('node_modules/@libsql/core'),
     resolve('node_modules/@libsql/hrana-client'),
     resolve('node_modules/@libsql/client'),
+    // cross-fetch and its bundled node-fetch also use new URL()
+    resolve('node_modules/cross-fetch'),
+    resolve('node_modules/@libsql/hrana-client/node_modules/cross-fetch'),
   ]
 
   for (const dir of dirs) {
