@@ -7,8 +7,8 @@ function getPrismaClient(): PrismaClient {
   if (globalForPrisma.prisma) return globalForPrisma.prisma
 
   // Use TURSO_DATABASE_URL for cloud (Vercel), fall back to DATABASE_URL for local dev
-  const url = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || 'file:./dev.db'
-  const authToken = process.env.TURSO_AUTH_TOKEN || process.env.DATABASE_AUTH_TOKEN
+  const url = (process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || 'file:./dev.db').trim()
+  const authToken = (process.env.TURSO_AUTH_TOKEN || process.env.DATABASE_AUTH_TOKEN || '').trim() || undefined
 
   const adapter = new PrismaLibSql({
     url,

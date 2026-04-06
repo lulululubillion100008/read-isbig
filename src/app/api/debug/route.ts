@@ -1,8 +1,8 @@
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const tursoUrl = process.env.TURSO_DATABASE_URL
-  const authToken = process.env.TURSO_AUTH_TOKEN
+  const tursoUrl = process.env.TURSO_DATABASE_URL?.trim()
+  const authToken = process.env.TURSO_AUTH_TOKEN?.trim()
   const httpUrl = tursoUrl!.replace('libsql://', 'https://')
   const info: Record<string, unknown> = {
     httpUrl: httpUrl.substring(0, 50),
