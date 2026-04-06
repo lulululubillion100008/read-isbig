@@ -32,16 +32,32 @@ export async function GET() {
     info.fetchError = error instanceof Error ? error.message : String(error)
   }
 
-  // Test 2: @libsql/client
+  // Test 2: @libsql/client with various approaches
+  const urlToTest = httpUrl
+  info.urlBytes = Buffer.from(urlToTest).toString('hex').substring(0, 40)
+  info.urlLength = urlToTest.length
+  info.urlValid = (() => { try { new URL(urlToTest); return true } catch { return false } })()
+
   try {
     const { createClient } = await import('@libsql/client')
     info.importOk = true
-    const client = createClient({ url: httpUrl, authToken: authToken! })
+    const client = createClient({ url: urlToTest, authToken: authToken! })
     info.clientCreated = true
     const result = await client.execute('SELECT COUNT(*) as cnt FROM Book')
     info.libsqlCount = result.rows[0]?.cnt
   } catch (error) {
-    info.libsqlError = error instanceof Error ? `${error.message} | ${error.stack?.split('\n')[1]}` : String(error)
+    info.libsqlError = error instanceof Error ? `${error.message} | ${error.stack?.split('\n').slice(0, 4).join(' -> ')}` : String(error)
+  }
+
+  // Test 3: Try @libsql/client/http directly
+  try {
+    const { createClient: createHttp } = await import('@libsql/client/http')
+    const client = createHttp({ url: urlToTest, authToken: authToken! })
+    const result = await client.execute('SELECT COUNT(*) as cnt FROM Book')
+    info.httpClientCount = result.rows[0]?.cnt
+    info.httpClientOk = true
+  } catch (error) {
+    info.httpClientError = error instanceof Error ? error.message : String(error)
   }
 
   return Response.json(info)
