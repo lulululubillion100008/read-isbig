@@ -19,6 +19,9 @@ interface ContentRendererProps {
   fontFamily?: string;
 }
 
+/** Blocks that benefit from a slightly more dramatic entrance */
+const accentBlocks = new Set(['quote', 'key-insight', 'callout', 'chapter-summary']);
+
 export default function ContentRenderer({
   blocks,
   fontSize = 16,
@@ -60,7 +63,17 @@ export default function ContentRenderer({
         ...(fontFamily ? { fontFamily } : {}),
       }}
     >
-      {blocks.map((block, i) => renderBlock(block, i))}
+      {blocks.map((block, i) => (
+        <div
+          key={`${block.type}-${i}`}
+          className="vibe-scroll-reveal"
+          style={{
+            '--reveal-delay': `${Math.min(i * 30, 200)}ms`,
+          } as React.CSSProperties}
+        >
+          {renderBlock(block, i)}
+        </div>
+      ))}
     </div>
   );
 }

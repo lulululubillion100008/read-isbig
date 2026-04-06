@@ -4,6 +4,7 @@ import { useRef, useCallback, useEffect, useState } from 'react';
 import type { Chapter } from '@/lib/types';
 import ContentRenderer from './ContentRenderer';
 
+
 interface ScrollReaderProps {
   chapters: Chapter[];
   fontSize: number;
@@ -66,8 +67,8 @@ export default function ScrollReader({
             ref={(el) => { chapterRefs.current[i] = el; }}
             className="mb-12"
           >
-            {/* 章节标题 */}
-            <div className="mb-6">
+            {/* 章节标题 — scroll-reveal entrance */}
+            <div className="vibe-scroll-reveal mb-6">
               <div className="mb-1 text-xs font-medium uppercase tracking-widest text-[var(--text-quaternary)]">
                 第 {i + 1} 章
               </div>
@@ -87,7 +88,7 @@ export default function ScrollReader({
 
             {/* 章节分隔 */}
             {i < chapters.length - 1 && (
-              <div className="mt-12 flex items-center justify-center gap-2">
+              <div className="vibe-scroll-reveal mt-12 flex items-center justify-center gap-2">
                 <span className="h-px w-12 bg-[var(--gray-6)]" />
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--gray-5)]" />
                 <span className="h-px w-12 bg-[var(--gray-6)]" />
