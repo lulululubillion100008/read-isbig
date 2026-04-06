@@ -23,8 +23,15 @@ try {
     try {
         return new URL(urlString);
     } catch {
-        // Construct a minimal URL-like object as fallback
-        return new URL(urlString.endsWith('/') ? urlString : urlString + '/');
+        // Fallback: construct a URL-like object that has the properties the library needs
+        const withSlash = urlString.endsWith('/') ? urlString : urlString + '/';
+        try { return new URL(withSlash); } catch { /* continue to manual fallback */ }
+        return {
+            origin: \`\${schemeText}//\${authorityText.replace('//', '')}\`,
+            pathname: pathText || '/',
+            href: withSlash,
+            toString() { return withSlash; }
+        };
     }`
 
   if (!content.includes(original)) {
