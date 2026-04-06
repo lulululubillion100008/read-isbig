@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-import { PrismaLibSql } from '@prisma/adapter-libsql'
+import { createClient } from '@libsql/client'
 
 export const dynamic = 'force-dynamic'
 
@@ -9,30 +8,35 @@ export async function GET() {
   const info: Record<string, unknown> = {
     TURSO_URL: tursoUrl?.substring(0, 40) + '...',
     AUTH_TOKEN_SET: !!authToken,
-    AUTH_TOKEN_LEN: authToken?.length,
     NODE_ENV: process.env.NODE_ENV,
   }
 
-  // Test 1: Try creating adapter directly
+  // Test 1: Raw libsql client (no Prisma)
   try {
-    const adapter = new PrismaLibSql({
-      url: tursoUrl!,
-      authToken: authToken!,
-    })
-    info.adapterCreated = true
-
-    // Test 2: Try creating PrismaClient with adapter
-    const client = new PrismaClient({ adapter })
-    info.clientCreated = true
-
-    // Test 3: Try querying
-    const count = await client.book.count()
-    info.bookCount = count
-    info.dbStatus = 'connected'
+    const client = createClient({ url: tursoUrl!, authToken: authToken! })
+    const result = await client.execute('SELECT COUNT(*) as cnt FROM Book')
+    info.rawBookCount = result.rows[0]?.cnt
+    info.rawStatus = 'connected'
   } catch (error) {
-    info.dbStatus = 'error'
-    info.dbError = error instanceof Error ? error.message : String(error)
-    info.dbStack = error instanceof Error ? error.stack?.split('\n').slice(0, 8) : undefined
+    info.rawStatus = 'error'
+    info.rawError = error instanceof Error ? error.message : String(error)
+  }
+
+  // Test 2: Prisma with adapter
+  try {
+    const { PrismaLibSql } = await import('@prisma/adapter-libsql')
+    const { PrismaClient } = await import('@prisma/client')
+    const adapter = new PrismaLibSql({ url: tursoUrl!, authToken: authToken! })
+    const prisma = new PrismaClient({ adapter })
+    const count = await prisma.book.count()
+    info.prismaBookCount = count
+    info.prismaStatus = 'connected'
+  } catch (error) {
+    info.prismaStatus = 'error'
+    info.prismaError = error instanceof Error ? error.message : String(error)
+    if (error && typeof error === 'object' && 'code' in error) {
+      info.prismaCode = (error as { code: string }).code
+    }
   }
 
   return Response.json(info)
