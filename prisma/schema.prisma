@@ -15,12 +15,16 @@ model User {
   name          String
   password      String
   avatar        String?
+  plan          String           @default("free")
+  credits       Int              @default(5)
+  planExpiresAt DateTime?
   createdAt     DateTime         @default(now())
   history       ReadingHistory[]
   favorites     UserFavorite[]
   sessions      ReadingSession[]
   conversations AIConversation[]
   preferences   UserPreferences?
+  achievements  UserAchievement[]
 }
 
 model UserPreferences {
@@ -64,9 +68,25 @@ model BookSummary {
   chaptersJson String?
   contentType  String   @default("summary")
   readingTime  Int      @default(15)
+  rating       Float?
+  ratingCount  Int      @default(0)
+  ratings      SummaryRating[]
   generatedAt  DateTime @default(now())
 
   @@index([bookId])
+}
+
+model SummaryRating {
+  id        String      @id @default(cuid())
+  summaryId String
+  summary   BookSummary @relation(fields: [summaryId], references: [id], onDelete: Cascade)
+  userId    String
+  score     Int
+  feedback  String?
+  createdAt DateTime    @default(now())
+
+  @@unique([summaryId, userId])
+  @@index([summaryId])
 }
 
 model BookScene {
@@ -142,4 +162,45 @@ model AIMessage {
   createdAt      DateTime       @default(now())
 
   @@index([conversationId])
+}
+
+// ─── Achievements ────────────────────────────────────────
+
+model Achievement {
+  id          String            @id @default(cuid())
+  key         String            @unique
+  name        String
+  description String
+  icon        String            @default("🏆")
+  condition   String
+  users       UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+}
+
+// ─── AI Usage Tracking ───────────────────────────────────
+
+model AIUsageLog {
+  id           String   @id @default(cuid())
+  userId       String?
+  bookId       String?
+  action       String
+  model        String
+  inputTokens  Int      @default(0)
+  outputTokens Int      @default(0)
+  costUsd      Float    @default(0)
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
 }

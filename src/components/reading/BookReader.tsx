@@ -9,6 +9,7 @@ import ReaderSettingsPanel from './ReaderSettingsPanel';
 import ScrollReader from './ScrollReader';
 import PageReader from './PageReader';
 import QAPanel from './QAPanel';
+import RatingPrompt from './RatingPrompt';
 
 const AtmosphereCanvas = lazy(() => import('@/components/atmosphere/AtmosphereCanvas'));
 
@@ -22,6 +23,8 @@ export default function BookReader({ book, content, scene }: BookReaderProps) {
   const { settings, updateSettings, getFontCSS } = useReaderSettings();
   const [showSettings, setShowSettings] = useState(false);
   const [showQA, setShowQA] = useState(false);
+  const [showRating, setShowRating] = useState(false);
+  const [ratingDismissed, setRatingDismissed] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const bgTheme = BACKGROUND_THEMES[settings.backgroundTheme];
@@ -29,7 +32,10 @@ export default function BookReader({ book, content, scene }: BookReaderProps) {
 
   const handleProgressChange = useCallback((p: number) => {
     setProgress(p);
-  }, []);
+    if (p >= 0.8 && !ratingDismissed && !showRating) {
+      setShowRating(true);
+    }
+  }, [ratingDismissed, showRating]);
 
   const closeSettings = useCallback(() => setShowSettings(false), []);
 
@@ -54,6 +60,7 @@ export default function BookReader({ book, content, scene }: BookReaderProps) {
       {/* 工具栏 */}
       <ReaderToolbar
         bookTitle={book.title}
+        bookId={book.id}
         onSettingsClick={() => setShowSettings(true)}
         onQAClick={() => setShowQA(true)}
       />
@@ -102,6 +109,17 @@ export default function BookReader({ book, content, scene }: BookReaderProps) {
           bookId={book.id}
           bookTitle={book.title}
           onClose={() => setShowQA(false)}
+        />
+      )}
+
+      {/* 评价提示 */}
+      {showRating && !ratingDismissed && (
+        <RatingPrompt
+          bookId={book.id}
+          onDismiss={() => {
+            setShowRating(false);
+            setRatingDismissed(true);
+          }}
         />
       )}
     </div>

@@ -17,6 +17,9 @@ export async function GET(req: NextRequest) {
     totalSessions,
     weekSessions,
     recentHistory,
+    favoriteCount,
+    achievementCount,
+    categoryResult,
   ] = await Promise.all([
     prisma.readingHistory.count({ where: { userId } }),
     prisma.readingSession.aggregate({
@@ -33,7 +36,45 @@ export async function GET(req: NextRequest) {
       orderBy: { readAt: 'desc' },
       take: 5,
     }),
+    prisma.userFavorite.count({ where: { userId } }),
+    prisma.userAchievement.count({ where: { userId } }),
+    prisma.readingHistory.findMany({
+      where: { userId },
+      select: { book: { select: { category: true } } },
+      distinct: ['bookId'],
+    }),
   ]);
+
+  const categoriesExplored = new Set(
+    categoryResult.map(r => r.book.category).filter(Boolean)
+  ).size;
+
+  // Calculate reading streak (days with reading history)
+  const last30Days = await prisma.readingHistory.findMany({
+    where: { userId, readAt: { gte: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000) } },
+    select: { readAt: true },
+    orderBy: { readAt: 'desc' },
+  });
+
+  let currentStreak = 0;
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const readDays = new Set(
+    last30Days.map(r => {
+      const d = new Date(r.readAt);
+      return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    })
+  );
+
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    if (readDays.has(key)) {
+      currentStreak++;
+    } else if (i > 0) {
+      break; // streak broken
+    }
+    // Allow today to be missing (haven't read yet today)
+  }
 
   return NextResponse.json({
     success: true,
@@ -41,6 +82,10 @@ export async function GET(req: NextRequest) {
       totalBooksRead,
       totalMinutes: totalSessions._sum.durationMin ?? 0,
       thisWeekMinutes: weekSessions._sum.durationMin ?? 0,
+      currentStreak,
+      favoriteCount,
+      achievementCount,
+      categoriesExplored,
       recentBooks: recentHistory.map((h) => ({
         bookId: h.book.id,
         title: h.book.title,

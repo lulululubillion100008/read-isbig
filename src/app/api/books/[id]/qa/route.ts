@@ -4,6 +4,8 @@ import { getUserIdFromRequest } from '@/lib/auth';
 import { rateLimit } from '@/lib/rate-limit';
 import { aiQuestionSchema, bookIdSchema } from '@/lib/validation';
 import { streamQA } from '@/lib/ai/qa';
+import { checkQAQuota } from '@/lib/quota';
+import { logAIUsage } from '@/lib/ai/usage';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -28,6 +30,15 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json(
       { success: false, error: '请求过于频繁，请稍后重试' },
       { status: 429 }
+    );
+  }
+
+  // 配额检查
+  const quota = await checkQAQuota(userId);
+  if (!quota.allowed) {
+    return NextResponse.json(
+      { success: false, error: '本月问答额度已用完，请升级计划', quota },
+      { status: 403 }
     );
   }
 
@@ -91,6 +102,16 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       bookContext,
       messages,
     });
+
+    // Log QA usage (fire-and-forget, estimate tokens)
+    logAIUsage({
+      userId,
+      bookId: id,
+      action: 'qa',
+      model: 'claude-sonnet-4-20250514',
+      inputTokens: Math.ceil(bookContext.length / 4 + question.length / 4),
+      outputTokens: 500, // estimated
+    }).catch(() => {});
 
     return new Response(stream, {
       headers: {

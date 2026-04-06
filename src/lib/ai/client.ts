@@ -52,7 +52,29 @@ export async function callClaude(options: {
   }
 
   const data = await response.json();
-  return data.content[0].text;
+  // Return text + usage info for logging
+  const text = data.content[0].text;
+  const usage = data.usage as { input_tokens?: number; output_tokens?: number } | undefined;
+
+  return Object.assign(text as string, {
+    _usage: {
+      inputTokens: usage?.input_tokens ?? 0,
+      outputTokens: usage?.output_tokens ?? 0,
+      model,
+    },
+  });
+}
+
+export interface ClaudeUsage {
+  inputTokens: number;
+  outputTokens: number;
+  model: string;
+}
+
+/** Extract usage from callClaude result */
+export function getUsage(result: string): ClaudeUsage | null {
+  const r = result as string & { _usage?: ClaudeUsage };
+  return r._usage ?? null;
 }
 
 /**

@@ -60,6 +60,18 @@ export function useOnboarding() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(final));
     setAnswers(final);
     setIsComplete(true);
+
+    // Sync preferences to server (fire-and-forget)
+    fetch('/api/user/preferences', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        interests: final.interests,
+        readingGoal: final.readingGoal,
+        preferredStyle: final.preferredStyle,
+      }),
+    }).catch(() => {});
   }, [answers]);
 
   const reset = useCallback(() => {

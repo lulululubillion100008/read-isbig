@@ -4,6 +4,7 @@ import { generateBookSummary } from '@/lib/ai/summary'
 import { getUserIdFromRequest } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
 import { bookIdSchema } from '@/lib/validation'
+import { checkGenerationQuota } from '@/lib/quota'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,6 +72,15 @@ export async function POST(
     )
   }
 
+  // 配额检查
+  const quota = await checkGenerationQuota(userId)
+  if (!quota.allowed) {
+    return Response.json(
+      { success: false, error: `本月免费额度已用完（${quota.plan} 计划），请升级或下月再试`, quota },
+      { status: 403 }
+    )
+  }
+
   // 查找或创建书籍
   let book = await prisma.book.findUnique({ where: { id } })
 
@@ -123,6 +133,8 @@ export async function POST(
     const result = await generateBookSummary({
       bookTitle: book.title,
       bookAuthor: book.author,
+      userId,
+      bookId: book.id,
     })
 
     // 更新书籍元数据
