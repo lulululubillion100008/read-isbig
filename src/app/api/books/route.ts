@@ -41,7 +41,8 @@ export async function GET(request: NextRequest) {
       data: books,
       meta: { total, page, limit },
     })
-  } catch {
+  } catch (error) {
+    console.error('Books API error:', error)
     return Response.json(
       { success: false, error: '获取书籍列表失败' },
       { status: 500 }
