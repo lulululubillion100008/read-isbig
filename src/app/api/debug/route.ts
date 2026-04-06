@@ -11,15 +11,28 @@ export async function GET() {
     NODE_ENV: process.env.NODE_ENV,
   }
 
-  // Test 1: Raw libsql client (no Prisma)
+  // Convert libsql:// to https:// for serverless compatibility
+  const httpUrl = tursoUrl!.replace('libsql://', 'https://')
+  info.httpUrl = httpUrl.substring(0, 40) + '...'
+
+  // Test 1a: Raw libsql client with original URL
   try {
     const client = createClient({ url: tursoUrl!, authToken: authToken! })
     const result = await client.execute('SELECT COUNT(*) as cnt FROM Book')
-    info.rawBookCount = result.rows[0]?.cnt
-    info.rawStatus = 'connected'
+    info.rawOriginalCount = result.rows[0]?.cnt
   } catch (error) {
-    info.rawStatus = 'error'
-    info.rawError = error instanceof Error ? error.message : String(error)
+    info.rawOriginalError = error instanceof Error ? error.message : String(error)
+  }
+
+  // Test 1b: Raw libsql client with https:// URL
+  try {
+    const client = createClient({ url: httpUrl, authToken: authToken! })
+    const result = await client.execute('SELECT COUNT(*) as cnt FROM Book')
+    info.rawHttpCount = result.rows[0]?.cnt
+    info.rawHttpStatus = 'connected'
+  } catch (error) {
+    info.rawHttpStatus = 'error'
+    info.rawHttpError = error instanceof Error ? error.message : String(error)
   }
 
   // Test 2: Prisma with adapter
