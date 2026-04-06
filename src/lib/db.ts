@@ -14,6 +14,9 @@ function getPrismaClient(): PrismaClient {
     ...(authToken ? { authToken } : {}),
   })
 
+  // @ts-expect-error -- Prisma types mark datasourceUrl as `never` when adapter is set,
+  // but without it Prisma validates DATABASE_URL as SQLite and rejects https:// URLs.
+  // The adapter overrides the actual connection; this just satisfies Prisma's URL parser.
   const client = new PrismaClient({
     adapter,
     datasourceUrl: 'file:./placeholder.db',
