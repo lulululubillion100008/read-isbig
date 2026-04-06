@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { callClaude } from './client';
 import type { BookScene, SceneType } from '@/lib/types';
 
 interface GenerateSceneOptions {
@@ -9,15 +10,7 @@ interface GenerateSceneOptions {
   description?: string;
 }
 
-export async function generateBookScene(options: GenerateSceneOptions): Promise<BookScene> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    throw new Error('ANTHROPIC_API_KEY not configured');
-  }
-
-  const { bookTitle, bookAuthor, category, description } = options;
-
-  const systemPrompt = `你是一位视觉氛围设计师。根据书籍信息，生成一个Three.js场景配置，用于阅读时的沉浸式背景氛围。
+const SCENE_SYSTEM_PROMPT = `你是一位视觉氛围设计师。根据书籍信息，生成一个Three.js场景配置，用于阅读时的沉浸式背景氛围。
 
 输出严格JSON格式：
 {
@@ -43,6 +36,9 @@ export async function generateBookScene(options: GenerateSceneOptions): Promise<
 
 只输出JSON，不要其他文字。`;
 
+export async function generateBookScene(options: GenerateSceneOptions): Promise<BookScene> {
+  const { bookTitle, bookAuthor, category, description } = options;
+
   const userMessage = [
     `书名：《${bookTitle}》`,
     bookAuthor ? `作者：${bookAuthor}` : null,
@@ -50,36 +46,13 @@ export async function generateBookScene(options: GenerateSceneOptions): Promise<
     description ? `简介：${description}` : null,
   ].filter(Boolean).join('\n');
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000);
-
-  let response: Response;
-  try {
-    response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2024-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 500,
-        messages: [{ role: 'user', content: userMessage }],
-        system: systemPrompt,
-      }),
-      signal: controller.signal,
-    });
-  } finally {
-    clearTimeout(timeout);
-  }
-
-  if (!response.ok) {
-    throw new Error(`Claude API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-  const text = data.content[0].text;
+  const text = await callClaude({
+    system: SCENE_SYSTEM_PROMPT,
+    userMessage,
+    model: 'claude-haiku-4-5-20251001',
+    maxTokens: 500,
+    timeoutMs: 15000,
+  });
 
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {

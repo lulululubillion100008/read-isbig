@@ -111,9 +111,11 @@ export async function callClaudeStream(options: {
     throw new Error('No response body');
   }
 
-  // 将 Anthropic SSE 流转为纯文本流
+  // 将 Anthropic SSE 流转为纯文本流（带行缓冲，处理跨 chunk 拆分）
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
+  const encoder = new TextEncoder();
+  let buffer = '';
 
   return new ReadableStream({
     async pull(streamController) {
@@ -123,8 +125,10 @@ export async function callClaudeStream(options: {
         return;
       }
 
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n');
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      // 最后一个元素可能是不完整的行，保留在 buffer 中
+      buffer = lines.pop() ?? '';
 
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
@@ -134,7 +138,7 @@ export async function callClaudeStream(options: {
         try {
           const event = JSON.parse(jsonStr);
           if (event.type === 'content_block_delta' && event.delta?.text) {
-            streamController.enqueue(new TextEncoder().encode(event.delta.text));
+            streamController.enqueue(encoder.encode(event.delta.text));
           }
         } catch {
           // 跳过无法解析的行

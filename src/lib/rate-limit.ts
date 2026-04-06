@@ -29,6 +29,7 @@ export function rateLimit(
   limit: number = 5,
   windowMs: number = 60_000
 ): RateLimitResult {
+  maybeCleanup()
   const now = Date.now()
   const entry = rateLimitMap.get(key)
 
@@ -50,14 +51,16 @@ export function rateLimit(
   return { success: true, remaining: limit - updated.count }
 }
 
-// Periodic cleanup to prevent memory leak
-if (typeof globalThis !== 'undefined') {
-  setInterval(() => {
-    const now = Date.now()
-    for (const [key, entry] of rateLimitMap) {
-      if (now > entry.resetTime) {
-        rateLimitMap.delete(key)
-      }
+/**
+ * 清理过期条目。在每次 rateLimit() 调用时按概率触发，
+ * 避免依赖 setInterval（serverless 环境不可靠）。
+ */
+function maybeCleanup() {
+  if (Math.random() > 0.01) return // ~1% 概率触发
+  const now = Date.now()
+  for (const [key, entry] of rateLimitMap) {
+    if (now > entry.resetTime) {
+      rateLimitMap.delete(key)
     }
-  }, 60_000)
+  }
 }

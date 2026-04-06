@@ -49,7 +49,7 @@ export async function crawlBookData(bookTitle: string, config?: CrawlConfig): Pr
     const doubanData = await crawlSource(crawlUrl, targetUrl, config?.apiKey)
     return parseBookData(doubanData, bookTitle)
   } catch (error) {
-    console.error('[Crawler] Failed to crawl book data:', error instanceof Error ? error.message : 'unknown')
+    // 爬虫失败不影响主流程，静默返回 null
     return null
   }
 }

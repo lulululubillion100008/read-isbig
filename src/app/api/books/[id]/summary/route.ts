@@ -83,18 +83,17 @@ export async function POST(
       // empty body
     }
 
-    if (!body.title) {
+    if (!body.title || typeof body.title !== 'string' || body.title.length > 200) {
       return Response.json(
-        { success: false, error: '书籍不存在，请提供 title 和 author' },
+        { success: false, error: '书籍不存在，请提供有效的 title 和 author' },
         { status: 400 }
       )
     }
 
     book = await prisma.book.create({
       data: {
-        id,
-        title: body.title,
-        author: body.author ?? '未知作者',
+        title: body.title.trim(),
+        author: typeof body.author === 'string' ? body.author.trim().slice(0, 100) : '未知作者',
       },
     })
   }
