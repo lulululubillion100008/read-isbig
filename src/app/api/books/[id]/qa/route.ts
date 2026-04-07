@@ -7,6 +7,8 @@ import { streamQA } from '@/lib/ai/qa';
 import { checkQAQuota } from '@/lib/quota';
 import { logAIUsage } from '@/lib/ai/usage';
 
+export const maxDuration = 60;
+
 type RouteParams = { params: Promise<{ id: string }> };
 
 /**

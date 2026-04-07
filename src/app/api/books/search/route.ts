@@ -21,24 +21,31 @@ export async function GET(request: NextRequest) {
     return Response.json({ success: true, data: [] })
   }
 
-  const books = await prisma.book.findMany({
-    where: {
-      OR: [
-        { title: { contains: query } },
-        { author: { contains: query } },
-      ],
-    },
-    take: 20,
-    orderBy: { createdAt: 'desc' },
-  })
+  try {
+    const books = await prisma.book.findMany({
+      where: {
+        OR: [
+          { title: { contains: query } },
+          { author: { contains: query } },
+        ],
+      },
+      take: 20,
+      orderBy: { createdAt: 'desc' },
+    })
 
-  return Response.json({
-    success: true,
-    data: books.map(b => ({
-      id: b.id,
-      title: b.title,
-      author: b.author,
-      category: b.category,
-    })),
-  })
+    return Response.json({
+      success: true,
+      data: books.map(b => ({
+        id: b.id,
+        title: b.title,
+        author: b.author,
+        category: b.category,
+      })),
+    })
+  } catch {
+    return Response.json(
+      { success: false, error: '搜索失败，请稍后重试' },
+      { status: 500 }
+    )
+  }
 }

@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: false, error: '未登录' }, { status: 401 });
   }
 
+  try {
   // 并行查询统计数据
   const now = new Date();
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -93,4 +94,10 @@ export async function GET(req: NextRequest) {
       })),
     },
   });
+  } catch {
+    return NextResponse.json(
+      { success: false, error: '获取统计数据失败' },
+      { status: 500 }
+    );
+  }
 }

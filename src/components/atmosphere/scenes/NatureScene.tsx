@@ -3,8 +3,7 @@
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Float, Cloud } from '@react-three/drei';
-import type { Points, BufferGeometry, NormalBufferAttributes } from 'three';
-import * as THREE from 'three';
+import type { Mesh, Points, BufferGeometry, NormalBufferAttributes } from 'three';
 
 interface NatureSceneProps {
   palette: string[];
@@ -57,7 +56,7 @@ function Particles({ count, color, spread, speed }: {
 }
 
 function WaterPlane({ color }: { color: string }) {
-  const ref = useRef<THREE.Mesh>(null);
+  const ref = useRef<Mesh>(null);
 
   useFrame(({ clock }) => {
     if (!ref.current) return;

@@ -11,29 +11,36 @@ export async function GET(request: Request) {
     return NextResponse.json({ success: false, error: '未登录' }, { status: 401 })
   }
 
-  const [allAchievements, userAchievements] = await Promise.all([
-    prisma.achievement.findMany(),
-    prisma.userAchievement.findMany({
-      where: { userId },
-      select: { achievementId: true, unlockedAt: true },
-    }),
-  ])
+  try {
+    const [allAchievements, userAchievements] = await Promise.all([
+      prisma.achievement.findMany(),
+      prisma.userAchievement.findMany({
+        where: { userId },
+        select: { achievementId: true, unlockedAt: true },
+      }),
+    ])
 
-  const unlockedMap = new Map(
-    userAchievements.map(ua => [ua.achievementId, ua.unlockedAt])
-  )
+    const unlockedMap = new Map(
+      userAchievements.map(ua => [ua.achievementId, ua.unlockedAt])
+    )
 
-  const achievements = allAchievements.map(a => ({
-    id: a.id,
-    key: a.key,
-    name: a.name,
-    description: a.description,
-    icon: a.icon,
-    unlocked: unlockedMap.has(a.id),
-    unlockedAt: unlockedMap.get(a.id) ?? null,
-  }))
+    const achievements = allAchievements.map(a => ({
+      id: a.id,
+      key: a.key,
+      name: a.name,
+      description: a.description,
+      icon: a.icon,
+      unlocked: unlockedMap.has(a.id),
+      unlockedAt: unlockedMap.get(a.id) ?? null,
+    }))
 
-  return NextResponse.json({ success: true, data: achievements })
+    return NextResponse.json({ success: true, data: achievements })
+  } catch {
+    return NextResponse.json(
+      { success: false, error: '获取成就列表失败' },
+      { status: 500 }
+    )
+  }
 }
 
 /**
@@ -45,6 +52,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: '未登录' }, { status: 401 })
   }
 
+  try {
   // Gather user stats
   const [readingCount, favoriteCount, categoryResult, qaCount, minutesResult] = await Promise.all([
     prisma.readingHistory.count({ where: { userId } }),
@@ -109,4 +117,10 @@ export async function POST(request: Request) {
     success: true,
     data: { newlyUnlocked },
   })
+  } catch {
+    return NextResponse.json(
+      { success: false, error: '检查成就失败' },
+      { status: 500 }
+    )
+  }
 }

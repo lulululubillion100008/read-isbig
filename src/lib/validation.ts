@@ -50,3 +50,42 @@ export const readingSessionSchema = z.object({
   bookId: bookIdString,
   durationMin: z.number().int().min(1).max(1440),
 })
+
+// ─── AI 输出验证 ─────────────────────────────────────────
+
+const contentBlockSchema = z.object({
+  type: z.string(),
+  content: z.string().default(''),
+  level: z.number().optional(),
+  children: z.array(z.lazy((): z.ZodType => contentBlockSchema)).optional(),
+  expanded: z.boolean().optional(),
+  metadata: z.record(z.string(), z.string()).optional(),
+})
+
+const chapterSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  blocks: z.array(contentBlockSchema),
+  readingTimeMin: z.number().default(3),
+})
+
+export const aiSummaryOutputSchema = z.object({
+  book: z.object({
+    category: z.string().optional(),
+    description: z.string().optional(),
+  }).optional(),
+  chapters: z.array(chapterSchema).min(1),
+  contentType: z.string().optional(),
+  totalReadingTimeMin: z.number().optional(),
+})
+
+export const aiSceneOutputSchema = z.object({
+  sceneType: z.enum(['nature', 'interior', 'abstract']),
+  description: z.string().default(''),
+  config: z.object({
+    palette: z.array(z.string().regex(/^#[0-9a-fA-F]{6}$/)).min(1).max(5),
+    elements: z.array(z.string()).default([]),
+    mood: z.enum(['serene', 'solemn', 'energetic', 'contemplative', 'mysterious']),
+    timeOfDay: z.enum(['dawn', 'day', 'dusk', 'night']),
+  }),
+})

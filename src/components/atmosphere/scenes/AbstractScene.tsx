@@ -2,8 +2,7 @@
 
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
-import type { Points, BufferGeometry, NormalBufferAttributes } from 'three';
+import type { Mesh, Points, BufferGeometry, NormalBufferAttributes } from 'three';
 
 interface AbstractSceneProps {
   palette: string[];
@@ -102,7 +101,7 @@ export default function AbstractScene({ palette, mood, quality }: AbstractSceneP
 }
 
 function OrganicShape({ color }: { color: string }) {
-  const ref = useRef<THREE.Mesh>(null);
+  const ref = useRef<Mesh>(null);
 
   useFrame(({ clock }) => {
     if (!ref.current) return;

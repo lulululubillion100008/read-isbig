@@ -57,6 +57,9 @@ model Book {
   sessions      ReadingSession[]
   conversations AIConversation[]
   scene         BookScene?
+
+  @@index([category])
+  @@index([score])
 }
 
 model BookSummary {

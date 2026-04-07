@@ -4,6 +4,7 @@ import { callClaude, getUsage } from './client';
 import { SUMMARY_SYSTEM_PROMPT, buildSummaryUserMessage } from './prompts';
 import { logAIUsage } from './usage';
 import { getSmartModel } from './usage';
+import { aiSummaryOutputSchema } from '@/lib/validation';
 
 export interface GenerateSummaryOptions {
   bookTitle: string;
@@ -48,5 +49,10 @@ export async function generateBookSummary(options: GenerateSummaryOptions) {
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   if (!jsonMatch) throw new Error('Failed to parse summary JSON');
 
-  return JSON.parse(jsonMatch[0]);
+  const raw = JSON.parse(jsonMatch[0]);
+  const parsed = aiSummaryOutputSchema.safeParse(raw);
+  if (!parsed.success) {
+    throw new Error(`AI 输出格式验证失败: ${parsed.error.issues[0]?.message}`);
+  }
+  return parsed.data;
 }

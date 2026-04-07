@@ -1,7 +1,8 @@
 import 'server-only';
 
 import { callClaude } from './client';
-import type { BookScene, SceneType } from '@/lib/types';
+import type { BookScene } from '@/lib/types';
+import { aiSceneOutputSchema } from '@/lib/validation';
 
 interface GenerateSceneOptions {
   bookTitle: string;
@@ -59,42 +60,32 @@ export async function generateBookScene(options: GenerateSceneOptions): Promise<
     throw new Error('Failed to parse scene JSON');
   }
 
-  const parsed = JSON.parse(jsonMatch[0]);
+  const raw = JSON.parse(jsonMatch[0]);
+  const validated = aiSceneOutputSchema.safeParse(raw);
 
-  // 验证并规范化
-  const validSceneTypes: SceneType[] = ['nature', 'interior', 'abstract'];
-  const sceneType = validSceneTypes.includes(parsed.sceneType)
-    ? parsed.sceneType
-    : 'abstract';
-
-  const validMoods = ['serene', 'solemn', 'energetic', 'contemplative', 'mysterious'];
-  const mood = validMoods.includes(parsed.config?.mood)
-    ? parsed.config.mood
-    : 'contemplative';
-
-  const validTimes = ['dawn', 'day', 'dusk', 'night'];
-  const timeOfDay = validTimes.includes(parsed.config?.timeOfDay)
-    ? parsed.config.timeOfDay
-    : 'dusk';
-
-  const palette = Array.isArray(parsed.config?.palette)
-    ? parsed.config.palette.filter((c: string) => /^#[0-9a-fA-F]{6}$/.test(c)).slice(0, 3)
-    : [];
-
-  // 确保至少3个颜色
-  const defaultPalette = ['#1a1a2e', '#16213e', '#0f3460'];
-  while (palette.length < 3) {
-    palette.push(defaultPalette[palette.length]);
+  if (validated.success) {
+    // 确保至少3个颜色
+    const palette = [...validated.data.config.palette];
+    const defaultPalette = ['#1a1a2e', '#16213e', '#0f3460'];
+    while (palette.length < 3) {
+      palette.push(defaultPalette[palette.length]);
+    }
+    return {
+      ...validated.data,
+      config: { ...validated.data.config, palette },
+    };
   }
 
+  // 验证失败时使用安全降级
+  const defaultPalette = ['#1a1a2e', '#16213e', '#0f3460'];
   return {
-    sceneType,
-    description: typeof parsed.description === 'string' ? parsed.description : '',
+    sceneType: 'abstract' as const,
+    description: typeof raw.description === 'string' ? raw.description : '',
     config: {
-      palette,
-      elements: Array.isArray(parsed.config?.elements) ? parsed.config.elements : [],
-      mood,
-      timeOfDay,
+      palette: defaultPalette,
+      elements: [],
+      mood: 'contemplative' as const,
+      timeOfDay: 'dusk' as const,
     },
   };
 }

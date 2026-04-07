@@ -4,9 +4,10 @@ import { generateBookSummary } from '@/lib/ai/summary'
 import { getUserIdFromRequest } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
 import { bookIdSchema } from '@/lib/validation'
-import { checkGenerationQuota } from '@/lib/quota'
+import { checkGenerationQuota, deductCredit } from '@/lib/quota'
 
 export const dynamic = 'force-dynamic'
+export const maxDuration = 60
 
 export async function GET(
   request: NextRequest,
@@ -145,6 +146,11 @@ export async function POST(
         description: result.book?.description ?? book.description,
       },
     })
+
+    // 扣减积分（如果用户正在使用额外积分）
+    if (quota.plan === 'free') {
+      await deductCredit(userId).catch(() => {});
+    }
 
     // 存储生成结果
     const summary = await prisma.bookSummary.create({

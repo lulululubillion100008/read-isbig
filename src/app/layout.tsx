@@ -27,12 +27,24 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap"
           rel="stylesheet"
+        />
+        {/* LXGW WenKai: 延迟加载，避免阻塞首屏渲染 */}
+        <link
+          rel="preload"
+          href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css"
+          as="style"
         />
         <link
           href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css"
           rel="stylesheet"
+          media="print"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.querySelector('link[media="print"][href*="lxgw"]').media="all"`,
+          }}
         />
       </head>
       <body className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] antialiased">
